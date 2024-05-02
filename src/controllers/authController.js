@@ -4,6 +4,10 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const secret_key = process.env.SECRET_KEY;
 
+function genJWTToken(user) {
+    return jwt.sign({ user: user.username }, secret_key, { expiresIn: '1h' });
+}
+
 async function login(req, res) {
     let { username, password } = req.body;
     try {
@@ -11,7 +15,7 @@ async function login(req, res) {
         if (!user || !bcrypt.compareSync(password, user.password)) {
             return res.status(400).json({ message: 'Invalid username or password.' });
         }
-        const token = jwt.sign({ user : user.username}, secret_key, { expiresIn: '1h' });
+        const token = genJWTToken(user);
         res.json({ token });
     }
     catch (err) {
@@ -27,7 +31,7 @@ function register(req, res) {
         password: password
     });
     user.save()
-        .then(() => res.json({ message: 'User registered successfully.' }))
+        .then(() => res.json({ message: 'User registered successfully.' , token: genJWTToken(user)}))
         .catch((err) => res.status(400).json({ message: err.message }));
 }
 
