@@ -1,5 +1,6 @@
 // authMiddleware.js
 const jwt = require('jsonwebtoken');
+const secret_key = process.env.SECRET_KEY;
 
 function authenticate(req, res, next) {
     // Get token from headers, cookies, or request body
@@ -10,7 +11,7 @@ function authenticate(req, res, next) {
     }
 
     // Verify JWT token
-    jwt.verify(token, 'your_secret_key', (err, decoded) => {
+    jwt.verify(token, secret_key, (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: 'Invalid token.' });
         }
