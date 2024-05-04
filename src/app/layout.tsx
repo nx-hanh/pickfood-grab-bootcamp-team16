@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Header from "@/components/common/header";
 import "./globals.css";
+import Header from "@/components/common/header";
 
 const fontSans = FontSans({ 
   subsets: ["vietnamese"],
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        "flex flex-col min-h-screen justify-center items-center",
+        "flex flex-col min-h-screen justify-start items-center",
         fontSans.className
       )}>
         <Header />

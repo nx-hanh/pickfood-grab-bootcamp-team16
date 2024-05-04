@@ -46,8 +46,8 @@ const DarkModeToggle: React.FC = () => {
   return (
     <animated.svg
       xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
+      width="36"
+      height="36"
       viewBox="0 0 24 24"
       fill="none"
       strokeWidth="2"
@@ -57,6 +57,7 @@ const DarkModeToggle: React.FC = () => {
       onClick={toggleDarkMode}
       style={{
         cursor: "pointer",
+        padding: 0,
         ...svgContainerProps
       }}
     >
