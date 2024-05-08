@@ -1,4 +1,4 @@
-import Card from '@/components/app/Card'
+import Card from '@/components/home/Card'
 import React from 'react'
 import { useState } from 'react'
 import { useSprings, animated, to as interpolate } from '@react-spring/web'
@@ -111,19 +111,19 @@ const CardDeck = () => {
 
   return (
     <div
-    className='relative h-[480px] w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none my-4'
+    className='relative h-[550px] w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none my-4'
     >
       {props.map(({ x, y, rot, scale }, index) => (
         <animated.div
           key={index}
-          className="absolute w-full h-[480px] touch-none will-change-transform placeholder:flex justify-center items-center pt-2"
+          className="absolute w-full h-[550px] touch-none will-change-transform placeholder:flex justify-center items-center pt-2"
           style={{
             x, y
           }}
         >
           <animated.div
             {...bind(index)}
-            className='h-[450px] w-full touch-none will-change-transform p-4'
+            className='h-[480px] w-full touch-none will-change-transform p-4'
             style={{
               transform: interpolate([rot, scale],trans),
             }}

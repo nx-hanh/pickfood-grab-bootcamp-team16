@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
-import CardDeck from '@/components/app/CardDeck'
-import ListSimilar from '@/components/app/ListSimilar'
+import CardDeck from '@/components/home/CardDeck'
+import ListSimilar from '@/components/home/ListSimilar'
 const Home = () => {
   return (
     <div
