@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        "relative flex flex-col min-h-screen justify-start items-center py-auto",
+        "relative flex flex-col min-h-screen max-h-screen justify-start items-center py-auto",
         fontSans.className
       )}>
         <Header />

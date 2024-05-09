@@ -4,13 +4,13 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'images.unsplash.com',
+                hostname: 'picsum.photos',
                 port:'',
                 pathname: '/**',
             }
         ],
-
     },
+    reactStrictMode: false,
 };
 
 export default nextConfig;

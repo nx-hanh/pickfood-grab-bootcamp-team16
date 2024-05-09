@@ -17,8 +17,8 @@ const Card: FC<CardProps> = ({ image, name, address, price }) => {
         <Image
           src={image}
           alt={name}
-          height={0}
-          width={0}
+          height={225}
+          width={300}
           className="object-cover w-full h-full"
         />
       </div>
