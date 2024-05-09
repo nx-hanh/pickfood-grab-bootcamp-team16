@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import { buttonVariants } from './ui/button';
-import { Croissant, HandMetal } from 'lucide-react';
+import { Croissant } from 'lucide-react';
 
 const Navbar = () => {
   return (
     <div className=' bg-zinc-100 py-2 border-b border-s-zinc-200 fixed w-full z-10 top-0'>
-      <div className='container flex items-center justify-between'>
+      <div className='container flex items-center'>
         <Link href='/'>
           <Croissant />
         </Link>
-        <p>PickFood</p>
-        <Link className={buttonVariants()} href='/signin'>
+        <h2>PickFood</h2>
+        {/* <Link className={buttonVariants()} href='/signin'>
           Sign in
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
