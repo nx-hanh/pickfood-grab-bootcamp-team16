@@ -7,11 +7,11 @@ const MobileBody = () => {
   const router = useRouter();
   const handleLoginClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    router.push("/login");
+    router.push("/signin");
   }
   const handleRegisterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    router.push("/register");
+    router.push("/signup");
   }
   return (
     <div
