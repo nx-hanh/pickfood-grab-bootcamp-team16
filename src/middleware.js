@@ -11,6 +11,5 @@ export async function middleware(request) {
 }
  
 export const config = {
-    matcher: ['/1212']
-    // matcher: ['/api/((?!auth).*)']
+    matcher: ['/api/((?!auth).*)']
 }

@@ -6,8 +6,9 @@ export async function POST(request) {
     let userData = await request.json();
     let decoded = request.headers.get('decoded');
     decoded = JSON.parse(decoded);
+    let updateStatus = await updateFavorites(decoded.email, userData.favorites);
     let status = {
-        "status": await updateFavorites(decoded.email, userData.favorites)
+        "status": updateStatus
     }
     return new Response(JSON.stringify(status), jsonHeader);
 }

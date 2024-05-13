@@ -11,6 +11,7 @@ async function getRecommendation(userdata) {
         return null;
     }
     let userRatingVector = new RatingVector(user[0].favorites);
+    let tmp = recommendationSystem.getListSimilarity(userRatingVector);
     return recommendationSystem.getListSimilarity(userRatingVector);
 }
 
