@@ -4,8 +4,10 @@ const { verifyToken } = require('@/lib/Backend/authentication/jwt.js');
 
 export async function POST(request) {
     let userData = await request.json();
+    let decoded = request.headers.get('decoded');
+    decoded = JSON.parse(decoded);
     let status = {
-        "status": await updateFavorites(userData.email, userData.favorites)
+        "status": await updateFavorites(decoded.email, userData.favorites)
     }
     return new Response(JSON.stringify(status), jsonHeader);
 }

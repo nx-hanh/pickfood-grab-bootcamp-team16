@@ -6,10 +6,11 @@ export async function middleware(request) {
     let token = request.headers.get('Authorization');
     let decoded = await verifyToken(token);
     if (!decoded) return NextResponse.json({ error: 'Unauthorized' });
-    response.headers.set('decoded', decoded);
+    response.headers.set('decoded', JSON.stringify(decoded));
     return response;
 }
  
 export const config = {
-    matcher: ['/api/((?!auth).*)']
+    matcher: ['/1212']
+    // matcher: ['/api/((?!auth).*)']
 }
