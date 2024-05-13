@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server'
+const { verifyToken } = require("@/lib/Backend/authentication/jwt.js")
  
-// This function can be marked `async` if using `await` inside
-export function middleware(request) {
-    // const requestHeaders = new Headers(request.headers);
-    // requestHeaders.set('test', 'hello');
-    // let response = NextResponse.next({
-    //     headers: requestHeaders,
-    // });
+export async function middleware(request) {
     let response = NextResponse.next();
-    response.headers.set('test', 'hello');
+    let token = request.headers.get('Authorization');
+    let decoded = await verifyToken(token);
+    if (!decoded) return NextResponse.json({ error: 'Unauthorized' });
+    response.headers.set('decoded', decoded);
     return response;
 }
  
-// See "Matching Paths" below to learn more
 export const config = {
-    matcher: '/api/addfavor',
+    matcher: ['/api/((?!auth).*)']
 }

@@ -1,23 +1,23 @@
-const jwt = require('jsonwebtoken');
+const jose = require('jose')
 
-function generateToken(payload) {
-    let token = jwt.sign(payload, process.env.JWT_SECRET);
-    return token;
+let secret = jose.base64url.decode(process.env.JWT_SECRET); // JWT_SECRET="a1bed06892460d6d521980438971ed362673e04225d"
+
+async function generateToken(payload) {
+    const jwt = await new jose.EncryptJWT(payload)
+    .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
+    .encrypt(secret)
+    return jwt;
 }
 
 async function verifyToken(token) {
-    if (!token) return null;
-    let decoded;
+    let decrypted;
     try {
-        decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        decrypted = await jose.jwtDecrypt(token, secret)
     } catch (error) {
-        console.error('Token verification error:', error);
+        console.log("Error decrypting token: ", error)
         return null;
     }
-    return decoded;
+    return decrypted.payload;
 }
 
-module.exports = {
-    generateToken,
-    verifyToken
-}
+module.exports = { generateToken, verifyToken }

@@ -30,7 +30,8 @@ async function registerUser(userdata) {
         username: userdata.username,
         email: userdata.email,
         password: hashPassword,
-        favorites: null
+        favorites: null,
+        is_active: true
     });
     let status = await database.addData(newUser);
     return status;
@@ -49,10 +50,6 @@ function validateUserData(userData) {
 }    
 
 async function authenticateUser(userData) {
-    // let validateData = validateUserData(userData);
-    // if (validateData !== true) {
-    //     return validateData;
-    // }
     let status;
     if (userData.newUser) status = await registerUser(userData);
     else status = await loginUser(userData);

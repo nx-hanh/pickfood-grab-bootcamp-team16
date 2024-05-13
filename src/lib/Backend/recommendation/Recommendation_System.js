@@ -44,6 +44,12 @@ class RatingVector {
     }
 
     calculateSimilarity(other) {
+        // A 
+        // B
+        // A.B = A1.B1 + A2.B2 + ... + An.Bn
+        // |A| = sqrt(A1^2 + A2^2 + ... + An^2)
+        // |B| = sqrt(B1^2 + B2^2 + ... + Bn^2)
+        // similarity = A.B / (|A|.|B|)
         const dotProduct = _.sum(_.zipWith(this.categoriesRating, other.categoriesRating, (a, b) => a * b));
         const normA = Math.sqrt(_.sum(_.map(this.categoriesRating, x => x ** 2)));
         const normB = Math.sqrt(_.sum(_.map(other.categoriesRating, x => x ** 2)));

@@ -9,6 +9,10 @@ const UserSchema = new mongoose.Schema({
     favorites: {
         type: [Number], // Array of numbers
         default: null // Default value is null
+    },
+    is_active: {
+        type: Boolean,
+        default: true // Default value is true
     }
 });
 

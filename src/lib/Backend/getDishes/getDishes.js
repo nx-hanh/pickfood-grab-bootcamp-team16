@@ -16,6 +16,7 @@ async function getDishes() {
             imgLink: dishes[i].imgLink,
             price: dishes[i].price,
             description: dishes[i].description
+            // location: dishes[i].location
         });
     }
     return result;

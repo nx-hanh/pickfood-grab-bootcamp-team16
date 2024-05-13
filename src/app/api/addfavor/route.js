@@ -11,15 +11,10 @@ export async function POST(request) {
 }
 
 export async function GET(request) {
-    let token = request.headers.get('Authorization');
-    let check = request.headers.get('test');
-    let decoded = await verifyToken(token);
-    let email = decoded.email;
+    let decoded = request.headers.get('decoded');
     let status = {
         "status": "GET request not supported",
-        "data": email,
-        "token": token,
-        "check": check
+        "decoded": decoded
     }
     return new Response(JSON.stringify(status), jsonHeader);
 }
