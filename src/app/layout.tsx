@@ -32,7 +32,7 @@
 
 // export default AuthLayout;
 
-import Navbar from '@/components/Navbar';
+// import Navbar from '@/components/Navbar';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -53,7 +53,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <main className='h-screen flex flex-col justify-center items-center'>
-          <Navbar />
+          {/* <Navbar /> */}
           {children}
         </main>
       </body>
