@@ -1,11 +1,5 @@
 const authenticateUser = require('@/lib/Backend/authentication/authentication.js');
-const database = require('@/lib/Backend/database/Database.js');
-
-const jsonHeader = {
-    'headers': {
-        'Content-Type': 'application/json'
-    }
-}
+const jsonHeader = require('@/lib/Backend/header/jsonHeader.js');
 
 
 export async function POST(request) {

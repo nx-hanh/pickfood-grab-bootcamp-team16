@@ -1,14 +1,8 @@
 const bycrypt = require('bcryptjs');
 const database = require('@/lib/Backend/database/Database.js');
-const User = require('@/models/userSchema.js');
-const jwt = require('jsonwebtoken');
+const User = require('@/models/userSchema.js');``
 const SignupFormSchema = require('@/lib/Backend/authentication/definitions.ts');
-
-
-function generateToken(payload) {
-    let token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    return token;
-}
+const { generateToken, verifyToken } = require('@/lib/Backend/authentication/jwt.js');
 
 async function checkExistingUser(email) {
     let query = {
@@ -18,23 +12,26 @@ async function checkExistingUser(email) {
     return user;
 }
 
-async function loginUser(email, password) {
-    let user = await checkExistingUser(email);
+async function loginUser(userdata) {
+    let user = await checkExistingUser(userdata.email);
     if (user == null) return false;
     let status;
-    status = await bycrypt.compare(password, user[0].password);
+    status = await bycrypt.compare(userdata.password, user[0].password);
     return status;
 }
 
-async function registerUser(email, password) {
-    let user = await checkExistingUser(email);
+async function registerUser(userdata) {
+    let user = await checkExistingUser(userdata.email);
     if (user != null) {
         return false;
     }
-    password = await bycrypt.hash(password, 8);
+    let hashPassword = await bycrypt.hash(userdata.password, 8);
     let newUser = new User({
-        email: email,
-        password: password
+        username: userdata.username,
+        email: userdata.email,
+        password: hashPassword,
+        favorites: null,
+        is_active: true
     });
     let status = await database.addData(newUser);
     return status;
@@ -53,15 +50,11 @@ function validateUserData(userData) {
 }    
 
 async function authenticateUser(userData) {
-    // let validateData = validateUserData(userData);
-    // if (validateData !== true) {
-    //     return validateData;
-    // }
     let status;
-    if (userData.newUser) status = await registerUser(userData.email, userData.password);
-    else status = await loginUser(userData.email, userData.password);
+    if (userData.newUser) status = await registerUser(userData);
+    else status = await loginUser(userData);
     if (!status) return null;
     return generateToken({ email: userData.email });
 }
 
-module.exports = authenticateUser;
+module.exports = authenticateUser, verifyToken;
