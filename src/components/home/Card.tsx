@@ -1,4 +1,6 @@
 import CardActionButtons from "@/components/home/CardActionButtons";
+import CategoryTags from "@/components/home/CategoryTags";
+import DislikeButton from "@/components/home/DislikeButton";
 import Image from "next/image";
 import React from "react";
 import { FC } from "react";
@@ -8,24 +10,37 @@ interface CardProps {
   name: string;
   address: string;
   price: string;
+  categories: string[];
+  handleAction: (action: string) => void;
 }
 
-const Card: FC<CardProps> = ({ image, name, address, price }) => {
+const Card: FC<CardProps> = ({
+  image,
+  name,
+  address,
+  price,
+  categories,
+  handleAction,
+}) => {
   return (
-    <div className="relative flex flex-col bg-black border-2 border-[#fbf6ee] h-full w-full select-none cursor-pointer">
-      <div className="h-56 w-full border-b border-[#fbf6ee]">
+    <div className="relative flex flex-col bg-[#18191A] h-full w-full select-none cursor-pointer">
+      <div className="h-80 w-full">
         <Image
           src={image}
           alt={name}
-          height={225}
+          height={300}
           width={300}
           className="object-cover w-full h-full"
         />
       </div>
       <div className="flex flex-col p-4 h-full">
-        <h1 className="text-white text-2xl font-bold w-full line-clamp-2 mb-1 touch-none">
-          {name}
-        </h1>
+        <div className="flex flex-row w-full items-start justify-between">
+          <h1 className="text-white text-2xl font-bold w-full line-clamp-2 mb-1 touch-none">
+            {name}
+          </h1>
+          <DislikeButton handleAction={handleAction} />
+        </div>
+        <CategoryTags categories={categories} />
         <div className="grid grid-cols-10 gap-2 grid-rows-2">
           <Image
             alt="location"
