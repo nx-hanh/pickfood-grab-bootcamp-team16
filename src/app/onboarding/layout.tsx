@@ -1,13 +1,34 @@
-import { FC, ReactNode } from 'react';
+import type { Metadata } from "next";
+import { Roboto as FontSans } from "next/font/google";
+import { cn } from "@/lib/utils";
+// import "./globals.css";
+import Header from "@/components/common/header";
 
-interface OnboardingLayoutProps {
-  children: ReactNode;
-}
+const fontSans = FontSans({ 
+  subsets: ["vietnamese"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+ });
 
-const OnboardingLayout: FC<OnboardingLayoutProps> = ({ children }) => {
-  return <div> 
-    {/* className='bg-slate-200 p-10 rounded-md'> */}
-    {children}</div>;
+export const metadata: Metadata = {
+  title: "PickFood",
+  description: "PickFood: Your personalized dining companion.",
 };
 
-export default OnboardingLayout;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={cn(
+        "relative flex flex-col h-screen justify-start items-center py-auto",
+        fontSans.className
+      )}>
+        {/* <Header /> */}
+        {children}
+        </body>
+    </html>
+  );
+}
+
