@@ -3,6 +3,7 @@ const User = require('@/models/userSchema.js');
 const { recommendationSystem, RatingVector } = require('@/lib/Backend/recommendation/Recommendation_System.js');
 
 async function getRecommendation(userdata) {
+    console.log("Running getRecommendation")
     let query = {
         email: userdata.email
     }

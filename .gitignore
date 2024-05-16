@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+test.js
+test.py
 
 # next.js
 /.next/
