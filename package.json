@@ -9,17 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-spring/web": "^9.7.3",
+    "@use-gesture/react": "^10.3.1",
+    "clsx": "^2.1.1",
     "jose": "^5.3.0",
     "jose-node-cjs-runtime": "^5.3.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "@react-spring/web": "^9.7.3",
-    "@use-gesture/react": "^10.3.1",
-    "clsx": "^2.1.1",
     "next": "14.2.3",
+    "punycode": "^2.3.1",
     "react": "^18",
     "react-dom": "^18",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.1.1",

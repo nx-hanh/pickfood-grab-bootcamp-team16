@@ -10,7 +10,8 @@ const DishSchema = new mongoose.Schema({
     description: String,
     merchant_id: String,
     category: [String],
-    category_id: Number
+    category_id: Number,
+    rank: Number
   });
 
 module.exports = mongoose.models.Dishes || mongoose.model('Dishes', DishSchema);
