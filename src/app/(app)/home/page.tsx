@@ -20,6 +20,7 @@ interface Card {
 }
 
 const Home = () => {
+  //TODO: cards should be fetched from server and store in redux not in state
   const [cards, setCards] = useState<Card[]>([]);
   useEffect(() => {
     async function fetchData() {
@@ -31,6 +32,7 @@ const Home = () => {
           Authorization:
             "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..KTokkVdOFHJcHSxKhQNSMQ.DfrW16Xa_qvjxPdLBWOVMT-ZW_l40CUe-RMozAZTDyo.1c_l2vxId23RD_UWF8R5HA",
         },
+        //TODO: send lat, long when change to server
       })
       const data = await response.json();
       const cardData: Card[] = data.dishes.map((card: any) => {
@@ -51,6 +53,7 @@ const Home = () => {
   const [action, setAction] = useState<string>(ACTIONS_TYPE.NONE); //manage action for click button
   const [isSwiping, setIsSwiping] = useState<string>(ACTIONS_TYPE.NONE); //manage action for swipe card
   const handleAction = (action: string) => {
+    //TODO: send action to server
     switch (action) {
       case ACTIONS_TYPE.LIKE:
         console.log("like");

@@ -4,7 +4,7 @@ interface loadingProps {}
 
 const loading: FC<loadingProps> = ({}) => {
   return (
-    <div>
+    <div className="w-full h-svh flex items-center justify-center">
       <svg
         className="animate-spin -ml-1 mr-3 h-10 w-10 text-white"
         xmlns="http://www.w3.org/2000/svg"

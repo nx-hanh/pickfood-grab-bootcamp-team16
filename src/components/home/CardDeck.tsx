@@ -102,7 +102,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
     }
   );
   const handleAllGone = () => {
-    //TODO: Show action for user choice to view again or not
+    //TODO: fetch new cards when only 10 cards left
     setTimeout(() => {
       gone.clear();
       api.start((i) => to(i));

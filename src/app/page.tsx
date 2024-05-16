@@ -4,7 +4,6 @@ import { useEffect } from "react";
 
 
 export default function Page() {
-  //TODO: implement logic (isLogin, isAuth, etc.) to determine which page to show
   const router = useRouter();
 
   useEffect(() => {
