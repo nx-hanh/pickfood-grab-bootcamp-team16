@@ -7,7 +7,7 @@ import React from 'react'
 const Header = () => {
   const router = useRouter()
   return (
-    <header className='w-full flex items-center justify-between px-4 py-2 bg-[#111418]'>
+    <header className='w-full flex items-center justify-between px-4 py-2'>
         <Image src='/logo.svg'
           className='pl-1 cursor-pointer'
           onClick={() => router.push('/')}

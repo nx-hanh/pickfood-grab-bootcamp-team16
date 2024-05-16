@@ -7,7 +7,7 @@ export default function Layout({
 }) {
   
   return (
-    <div className="h-svh overflow-y-scroll flex flex-col w-screen justify-start items-center">
+    <div className="h-svh flex flex-col w-screen justify-start items-center">
       {children}
       <div className="absolute bottom-0 w-full flex justify-center items-center">
         <AppMenu/>

@@ -15,6 +15,7 @@ interface Card {
   address: string;
   price: string;
   categories: string[];
+  description: string;
 }
 interface CardDeckProps {
   cards: Card[];//list of cards to show in deck, the last card is on top
@@ -152,6 +153,28 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
     if (gone.size === cards.length) handleAllGone();
     setAction(ACTIONS_TYPE.NONE);
   }
+  if (action === ACTIONS_TYPE.DISLIKE) {
+    //swipe left when action button is clicked
+    const curIndex = cards.length - 1 - gone.size;
+    gone.add(curIndex);
+    handleAction(ACTIONS_TYPE.DISLIKE);
+    api.start((i) => {
+      if (curIndex !== i) return;
+      const isGone = gone.has(curIndex);
+      const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+      const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
+      const scale = 1;
+      return {
+        x,
+        rot,
+        scale,
+        delay: undefined,
+        config: { friction: 50, tension: 800 },
+      };
+    });
+    if (gone.size === cards.length) handleAllGone();
+    setAction(ACTIONS_TYPE.NONE);
+  }
 
   return (
     <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none">
@@ -171,7 +194,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
               transform: interpolate([rot, scale], trans),
             }}
           >
-            <Card {...cards[index]} handleAction={handleAction} />
+            <Card {...cards[index]} />
           </animated.div>
         </animated.div>
       ))}

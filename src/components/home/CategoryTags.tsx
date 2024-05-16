@@ -9,7 +9,7 @@ const CategoryTags: FC<CategoryTagsProps> = ({categories}) => {
   return <div 
     className="flex flex-wrap justify-start items-center w-full"
   >
-    {categories.map((category, index) => (
+    {categories && categories.map((category, index) => (
       <CategoryTagItem key={index} category={category}/>
     ))}
   </div>
