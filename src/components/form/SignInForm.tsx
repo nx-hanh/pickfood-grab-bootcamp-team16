@@ -20,12 +20,12 @@ import { useRouter } from 'next/navigation';
 const FormSchema = z.object({
   email: z
     .string()
-    .min(1, 'Email is required')
-    .email('Invalid email'),
+    .min(1, 'Vui lòng nhập email')
+    .email('Email không hợp lệ'),
   password: z
     .string()
-    .min(1, 'Password is required')
-    .min(8, 'Password must have more than 8 characters')
+    .min(1, 'Vui lòng nhập mật khẩu')
+    .min(8, 'Mật khẩu cần có ít nhất 8 ký tự')
 });
 
 const SignInForm = () => {
@@ -53,7 +53,7 @@ const SignInForm = () => {
       })
   
       if(response.ok) {
-        router.push('/onboarding/breakfast')
+        router.push('/onboarding')
       } else {
         console.error('Registration failed')
       }
@@ -70,7 +70,7 @@ const SignInForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder='americaya@hallo.com' {...field} />
+                  <Input placeholder='email@hallo.com' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
