@@ -1,15 +1,3 @@
-// import { FC, ReactNode } from 'react';
-
-// interface AuthLayoutProps {
-//   children: ReactNode;
-// }
-
-// const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
-//   return  <div className=' rounded-md bg-green-600 p-10 content-center'>{children}</div>;
-// };
-
-// export default AuthLayout;
-
 import type { Metadata } from "next";
 import { Roboto as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -34,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        // "rounded-md bg-green-600 p-10 content-center",
         "relative flex flex-col h-screen justify-start items-center py-auto",
         fontSans.className
       )}>

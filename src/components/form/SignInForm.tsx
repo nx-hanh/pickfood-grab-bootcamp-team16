@@ -15,9 +15,13 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
+import { useRouter } from 'next/navigation';
 
 const FormSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email'),
   password: z
     .string()
     .min(1, 'Password is required')
@@ -33,14 +37,31 @@ const SignInForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    // console.log(values);
+    const router = useRouter();
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+        })
+      })
+  
+      if(response.ok) {
+        router.push('/onboarding')
+      } else {
+        console.error('Registration failed')
+      }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-        <div className='space-y-2'>
+        <div className='w-11/12 mx-4 space-y-2'>
           <FormField
             control={form.control}
             name='email'
@@ -59,11 +80,11 @@ const SignInForm = () => {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Mật khẩu</FormLabel>
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='Enter your password'
+                    placeholder='Nhập mật khẩu'
                     {...field}
                   />
                 </FormControl>
@@ -72,18 +93,19 @@ const SignInForm = () => {
             )}
           />
         </div>
-        <Button className='w-full mt-6' type='submit'>
-          Sign in
+        {/* <Button className='w-full mt-6 bg-green-600 border-2 border-green-600' type='submit'> */}
+        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 bg-green-600 border-2 border-green-600' type='submit'>
+          Đăng nhập
         </Button>
       </form>
-      <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
-        or
+      <div className='w-11/12 mx-4 my-4 flex items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
+        hoặc
       </div>
-      <GoogleSignInButton>Sign in with Google</GoogleSignInButton>
-      <p className='text-center text-sm text-gray-600 mt-2'>
-        If you don&apos;t have an account, please&nbsp;
+      <GoogleSignInButton>Đăng nhập với Google</GoogleSignInButton>
+      <p className='text-center text-sm text-white mt-2'>
+        Nếu bạn chưa có tài khoản, hãy&nbsp;
         <Link className='text-blue-500 hover:underline' href='/signup'>
-          Sign up
+          đăng kí tại đây
         </Link>
       </p>
     </Form>
