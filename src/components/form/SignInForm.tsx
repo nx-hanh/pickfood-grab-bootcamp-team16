@@ -53,7 +53,7 @@ const SignInForm = () => {
       })
   
       if(response.ok) {
-        localStorage.getItem("token");
+        localStorage.setItem("token", (await response.json()).token);
         router.push('/home')
       } else {
         console.error('Registration failed')
