@@ -5,7 +5,6 @@ const page = () => {
     <div className='w-full items-center'>
       <SignUpForm />
     </div>
-
   );
 };
 

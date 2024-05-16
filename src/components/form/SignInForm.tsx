@@ -54,7 +54,7 @@ const SignInForm = () => {
   
       if(response.ok) {
         localStorage.getItem("token");
-        router.push('/onboarding')
+        router.push('/home')
       } else {
         console.error('Registration failed')
       }
