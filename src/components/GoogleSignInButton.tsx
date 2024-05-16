@@ -8,7 +8,7 @@ const GoogleSignInButton: FC<GoogleSignInButtonProps> = ({ children }) => {
   const loginWithGoogle = () => console.log('login with google');
 
   return (
-    <Button onClick={loginWithGoogle} className='w-full'>
+    <Button onClick={loginWithGoogle} variant='outline' className='w-11/12 mx-4 grid mt-6 bg-green-600 border-2 border-green-600' type='submit'>
       {children}
     </Button>
   );
