@@ -28,9 +28,9 @@ const Home = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": "Bearer " + localStorage.getItem("token"),
-          Authorization:
-            "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..KTokkVdOFHJcHSxKhQNSMQ.DfrW16Xa_qvjxPdLBWOVMT-ZW_l40CUe-RMozAZTDyo.1c_l2vxId23RD_UWF8R5HA",
+          "Authorization": localStorage.getItem("token") || ""
+          // Authorization:
+          //   "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..KTokkVdOFHJcHSxKhQNSMQ.DfrW16Xa_qvjxPdLBWOVMT-ZW_l40CUe-RMozAZTDyo.1c_l2vxId23RD_UWF8R5HA",
         },
         //TODO: send lat, long when change to server
       })

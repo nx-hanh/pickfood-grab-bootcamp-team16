@@ -38,7 +38,7 @@ export default function RootLayout({
         "relative flex flex-col h-screen justify-start items-center py-auto",
         fontSans.className
       )}>
-        {/* <Header /> */}
+        <Header />
         {children}
         </body>
     </html>

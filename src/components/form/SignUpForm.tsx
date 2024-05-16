@@ -68,6 +68,7 @@ const SignUpForm = () => {
 
     if(response.ok) {
       router.push('/onboarding')
+      localStorage.setItem("token", (await response.json()).token);
       // localStorage.setItem('itemName', value)
       // localStorage.getItem('itemName')
     } else {
