@@ -43,7 +43,7 @@ const SignInForm = () => {
     const response = await fetch('/api/auth', {
       method: 'POST',
       headers : {
-        'Content-Type' : 'application/json'
+        'Content-Type' : 'application/json',
       },
       body: JSON.stringify({
         email: values.email,
@@ -53,6 +53,7 @@ const SignInForm = () => {
       })
   
       if(response.ok) {
+        localStorage.getItem("token");
         router.push('/onboarding')
       } else {
         console.error('Registration failed')

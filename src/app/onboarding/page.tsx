@@ -20,8 +20,8 @@ const Onboarding: React.FC = () => {
       method: 'POST',
       headers : {
         'Content-Type' : 'application/json',
-        // Authorization : localStorage.getItem("token")
-        Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
+        Authorization : localStorage.getItem("token") || "",
+        // Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
       },
       body: JSON.stringify({
         favorites: selectedFoodItems.map(food => food.id)
