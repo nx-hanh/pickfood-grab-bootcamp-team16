@@ -61,12 +61,15 @@ const SignUpForm = () => {
       username: values.username,
       email: values.email,
       password: values.password,
-      confirmPassword: values.confirmPassword
+      confirmPassword: values.confirmPassword,
+      newUser: true
       })
     })
 
     if(response.ok) {
       router.push('/signin')
+      // localStorage.setItem('itemName', value)
+      // localStorage.getItem('itemName')
     } else {
       console.error('Registration failed')
     }
