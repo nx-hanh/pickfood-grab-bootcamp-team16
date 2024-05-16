@@ -1,4 +1,5 @@
 import CardActionButtons from "@/components/home/CardActionButtons";
+import CategoryTags from "@/components/home/CategoryTags";
 import Image from "next/image";
 import React from "react";
 import { FC } from "react";
@@ -8,16 +9,26 @@ interface CardProps {
   name: string;
   address: string;
   price: string;
+  categories: string[];
+  description: string;
 }
 
-const Card: FC<CardProps> = ({ image, name, address, price }) => {
+const Card: FC<CardProps> = ({
+  image,
+  name,
+  address,
+  price,
+  categories,
+  description
+}) => {
+  const imgSrc = image ? image : "/logo.svg";
   return (
-    <div className="relative flex flex-col bg-black border-2 border-[#fbf6ee] h-full w-full select-none cursor-pointer">
-      <div className="h-56 w-full border-b border-[#fbf6ee]">
+    <div className="relative flex flex-col bg-[#18191A] h-full w-full select-none cursor-pointer">
+      <div className="h-80 w-full">
         <Image
-          src={image}
+          src={imgSrc}
           alt={name}
-          height={225}
+          height={300}
           width={300}
           className="object-cover w-full h-full"
         />
@@ -26,6 +37,8 @@ const Card: FC<CardProps> = ({ image, name, address, price }) => {
         <h1 className="text-white text-2xl font-bold w-full line-clamp-2 mb-1 touch-none">
           {name}
         </h1>
+        <p className="text-white text-lg w-full line-clamp-2">{description}</p>
+        <CategoryTags categories={categories} />
         <div className="grid grid-cols-10 gap-2 grid-rows-2">
           <Image
             alt="location"
@@ -45,7 +58,7 @@ const Card: FC<CardProps> = ({ image, name, address, price }) => {
             className="row-start-2 col-span-1 object-cover w-full h-full max-h-[25px] max-w-[25px] "
           />
           <p className="row-start-2 col-start-2 col-span-9 text-white text-lg w-full line-clamp-1">
-            ${price} vnđ
+            {price} vnđ
           </p>
         </div>
       </div>

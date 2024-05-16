@@ -5,8 +5,9 @@ export default function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
-    <div className="max-h-screen overflow-y-scroll flex flex-col w-screen justify-start items-center">
+    <div className="h-svh flex flex-col w-screen justify-start items-center">
       {children}
       <div className="absolute bottom-0 w-full flex justify-center items-center">
         <AppMenu/>

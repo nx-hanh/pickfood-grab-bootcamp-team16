@@ -10,7 +10,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'picsum.photos',
+                hostname: 'food-cms.grab.com',
                 port:'',
                 pathname: '/**',
             }

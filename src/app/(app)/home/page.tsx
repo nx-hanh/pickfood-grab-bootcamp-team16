@@ -1,86 +1,90 @@
-'use client'
-import React, { useState } from 'react'
-import CardDeck from '@/components/home/CardDeck'
-import ListSimilar from '@/components/home/ListSimilar'
-import CardActionButtons from '@/components/home/CardActionButtons'
+"use client";
+import React, { useEffect, useState } from "react";
+import CardActionButtons from "@/components/home/CardActionButtons";
+import CardDeck from "@/components/home/CardDeck";
+import CardDeckSkeleton from "@/components/home/CardDeckSkeleton";
 const ACTIONS_TYPE = {
-  LIKE: 'like',
-  DISLIKE: 'dislike',
-  NONE: 'none'
-}
-const Home = () => {
-  const cards = [
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 1',
-      address: 'Address 1',
-      price: "100",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 2',
-      address: 'Address 2',
-      price: "200",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 3',
-      address: 'Address 3',
-      price: "300",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 4',
-      address: 'Address 4',
-      price: "400",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 5',
-      address: 'Address 5',
-      price: "500",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 6',
-      address: 'Address 6',
-      price: "600",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 7',
-      address: 'Address 7',
-      price: "700",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 8',
-      address: 'Address 8',
-      price: "800",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'Card 9',
-      address: 'Address 9',
-      price: "900",
-    },
-    {
-      image: 'https://picsum.photos/300/200',
-      name: 'HẺM ĐẬU - BÚN ĐẬU MẮM TÔM',
-      address: '140e Lý Chính Thắng, Phường 7, Quận 3, Thành phố Hồ Chí Minh',
-      price: '40.000 - 86.000',
-    }
-  ]
-  const [action, setAction] = useState(ACTIONS_TYPE.NONE);
-  return (
-    <div
-      className="container h-full w-full flex flex-col items-center justify-center"
-    >
-      <CardDeck cards={cards} action={action}  setAction={setAction} />
-      <ListSimilar/>
-      <CardActionButtons setAction={setAction} />
-    </div>
-  )
+  LIKE: "like",
+  DISLIKE: "dislike",
+  SKIP: "skip",
+  NONE: "none",
+};
+interface Card {
+  id: string;
+  image: string;
+  name: string;
+  address: string;
+  price: string;
+  description: string;
+  categories: string[];
 }
 
-export default Home
+const Home = () => {
+  //TODO: cards should be fetched from server and store in redux not in state
+  const [cards, setCards] = useState<Card[]>([]);
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch("/api/getdishes", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": "Bearer " + localStorage.getItem("token"),
+          Authorization:
+            "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..KTokkVdOFHJcHSxKhQNSMQ.DfrW16Xa_qvjxPdLBWOVMT-ZW_l40CUe-RMozAZTDyo.1c_l2vxId23RD_UWF8R5HA",
+        },
+        //TODO: send lat, long when change to server
+      })
+      const data = await response.json();
+      const cardData: Card[] = data.dishes.map((card: any) => {
+        return {
+          id: card.id,
+          image: card.imgLink,
+          name: card.name,
+          address: card.address,
+          price: card.price.toString(),
+          description: card.description,
+          categories: card.categories,
+        };
+      });
+      setCards(cardData.reverse());
+    }
+    fetchData();
+  }, []);
+  const [action, setAction] = useState<string>(ACTIONS_TYPE.NONE); //manage action for click button
+  const [isSwiping, setIsSwiping] = useState<string>(ACTIONS_TYPE.NONE); //manage action for swipe card
+  const handleAction = (action: string) => {
+    //TODO: send action to server
+    switch (action) {
+      case ACTIONS_TYPE.LIKE:
+        console.log("like");
+        break;
+      case ACTIONS_TYPE.SKIP:
+        console.log("skip");
+        break;
+      case ACTIONS_TYPE.DISLIKE:
+        console.log("dislike");
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div className="relative h-full w-full max-w-screen-sm flex flex-col items-center justify-start">
+      {cards.length > 0 ? (<CardDeck
+        cards={cards}
+        action={action}
+        setAction={setAction}
+        setIsSwiping={setIsSwiping}
+        handleAction={handleAction}
+      />) : (
+        <CardDeckSkeleton />)}
+      <CardActionButtons
+        isSwiping={isSwiping}
+        setAction={setAction}
+      />
+    </div>
+  );
+};
+
+export default Home;
