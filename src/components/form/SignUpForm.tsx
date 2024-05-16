@@ -21,21 +21,21 @@ const FormSchema = z
   .object({
     username: z
       .string()
-      .min(1, 'Username is required')
+      .min(1, 'Vui lòng nhập tên tài khoản')
       .max(100),
     email: z
       .string()
-      .min(1, 'Email is required')
-      .email('Invalid email'),
+      .min(1, 'Vui lòng nhập email')
+      .email('Email không hợp lệ'),
     password: z
       .string()
-      .min(1, 'Password is required')
-      .min(8, 'Password must have than 8 characters'),
-    confirmPassword: z.string().min(1, 'Password confirmation is required'),
+      .min(1, 'Vui lòng nhập mật khẩu')
+      .min(8, 'Mật khẩu cần có ít nhất 8 ký tự'),
+    confirmPassword: z.string().min(1, 'Vui lòng nhập lại mật khẩu'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Password do not match',
+    message: 'Mật khẩu không trùng khớp',
   });
 
 const SignUpForm = () => {
@@ -67,7 +67,7 @@ const SignUpForm = () => {
     })
 
     if(response.ok) {
-      router.push('/signin')
+      router.push('/onboarding')
       // localStorage.setItem('itemName', value)
       // localStorage.getItem('itemName')
     } else {
@@ -99,7 +99,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder='oniichan3K@example.com' {...field} />
+                  <Input placeholder='email@example.com' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
