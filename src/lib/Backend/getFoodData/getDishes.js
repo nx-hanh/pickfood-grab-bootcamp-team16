@@ -15,13 +15,57 @@ async function getDishes(recommendationList, category_sent_list) {
         if (recommendationCategory in category_sent_list) {
             index = category_sent_list[recommendationCategory];
         }
+        let dishes;
         let limit_query = Math.min(limit_dishes - cnt, limit_dishes_category);
-        let query = {
-            category_id: recommendationCategory,
-            rank: { $gt: index , $lte: index + limit_query}
-        }
-        const dishes = await database.findData(Dish, query, limit_query);
+        // let query = {
+        //     category_id: recommendationCategory,
+        //     rank: { $gt: index , $lte: index + limit_query}
+        // }
+        // dishes = await database.findData(Dish, query, limit_query);
+        let pipeline = [
+            {
+                $lookup: {
+                    from: 'restaurants',
+                    localField: 'merchant_id',
+                    foreignField: 'id',
+                    as: 'restaurants'
+                }
+            }, 
+            {
+                $match: {
+                    category_id: recommendationCategory,
+                    rank: { $gt: index, $lte: index + limit_query }
+                }
+            },
+            {
+                $project: {
+                    _id: 0, // Exclude the _id field
+                    name: 1,
+                    imgLink: 1,
+                    price: 1,
+                    description: 1,
+                    category: 1,
+                    category_list_id: 1,
+                    rank: 1, // Include rank field
+                    restaurants: {
+                        $map: {
+                            input: "$restaurants",
+                            as: "restaurant",
+                            in: {
+                                address: "$$restaurant.address",
+                                // Include other fields you want from the 'restaurants' collection
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $limit: limit_query
+            }
+        ];
+        dishes = await database.aggregateData(Dish, pipeline);
         if (dishes == null) continue;
+        // console.log(dishes);
         cnt += dishes.length;
         for (let i = 0; i < dishes.length; i++) {
             result.push({
@@ -30,6 +74,9 @@ async function getDishes(recommendationList, category_sent_list) {
                 imgLink: dishes[i].imgLink,
                 price: dishes[i].price,
                 description: dishes[i].description,
+                category: dishes[i].category,
+                category_id: dishes[i].category_list_id,
+                address: dishes[i].restaurants[0].address,
                 rank: dishes[i].rank
             });
         }

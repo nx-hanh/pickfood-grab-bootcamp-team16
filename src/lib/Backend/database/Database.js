@@ -56,4 +56,16 @@ async function findAndUpdate(model, query, update) {
     }
 }
 
-module.exports = { connect, addData, findData, findAndUpdate }
+async function aggregateData(model, pipeline) {
+    try {
+        const result = await model.aggregate(pipeline);
+        if (result.length === 0) return null;
+        return result;
+    } catch (error) {
+        console.error('Error aggregating data in MongoDB:', error);
+        return null;
+    }
+}
+
+
+module.exports = { connect, addData, findData, findAndUpdate, aggregateData }
