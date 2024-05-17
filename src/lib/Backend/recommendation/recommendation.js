@@ -2,18 +2,22 @@ const database = require('@/lib/Backend/database/Database.js');
 const User = require('@/models/userSchema.js');
 const { recommendationSystem, RatingVector } = require('@/lib/Backend/recommendation/Recommendation_System.js');
 
-async function getRecommendation(userdata) {
+async function getRecommendation(userdata, return_user_favorites = false, userRatingVector = null) {
     console.log("Running getRecommendation")
-    let query = {
-        email: userdata.email
+    if (userRatingVector == null) {
+        let query = {
+            email: userdata.email
+        }
+        let user = await database.findData(User, query);
+        if (user == null) {
+            return null;
+        }
+        userRatingVector = new RatingVector(user[0].favorites);
     }
-    let user = await database.findData(User, query);
-    if (user == null) {
-        return null;
-    }
-    let userRatingVector = new RatingVector(user[0].favorites);
-    let tmp = recommendationSystem.getListSimilarity(userRatingVector);
-    return recommendationSystem.getListSimilarity(userRatingVector);
+    // userRatingVector.loop();
+    let rcm_result = recommendationSystem.getListSimilarity(userRatingVector);
+    if (!return_user_favorites) return rcm_result;
+    return [rcm_result, userRatingVector];
 }
 
 module.exports = getRecommendation;

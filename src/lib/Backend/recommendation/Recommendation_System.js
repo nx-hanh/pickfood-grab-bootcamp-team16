@@ -2,7 +2,6 @@ const fs = require('fs');
 const _ = require('lodash');
 
 const maxCategories = Number(process.env.MAX_CATEGORY);
-const buffScore = 1;
 const prefixFileName = `${process.cwd()}/src/lib/Backend/recommendation/`;
 
 class RatingVector {
@@ -28,7 +27,19 @@ class RatingVector {
     }
 
     setRating(categoryId, rating = 1) {
-        this.categoriesRating[categoryId] = rating * buffScore;
+        this.categoriesRating[categoryId] = rating;
+    }
+
+    updateRating(categoryId, rating) {
+        this.categoriesRating[categoryId] = Math.max(0, this.categoriesRating[categoryId] + rating);
+    }
+
+    extractRating() {
+        let result = [];
+        for (let i = 0; i < this.categoriesRating.length; i++) {
+            if (this.categoriesRating[i] > 0) result.push([i, this.categoriesRating[i]]);
+        }
+        return result;
     }
 
     getRating(categoryId) {
