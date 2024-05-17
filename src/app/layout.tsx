@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        "relative flex flex-col h-screen justify-start items-center py-auto",
+        "relative flex flex-col h-screen justify-start items-center ",
         fontSans.className
       )}>
         <Header />
