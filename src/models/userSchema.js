@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
     email: String,
     password: String,
     favorites: {
-        type: [Number], // Array of numbers
+        type: [[Number]], // Array of numbers
         default: null // Default value is null
     },
     is_active: {

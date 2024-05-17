@@ -1,6 +1,5 @@
-const database = require('@/lib/Backend/database/database.js');
+const database = require('@/lib/Backend/database/Database.js');
 const Dish = require('@/models/dishSchema.js');
-const getRecommendation = require('@/lib/Backend/recommendation/recommendation.js');
 const limit_dishes = 10;
 const limit_dishes_category = limit_dishes / 5;
 
