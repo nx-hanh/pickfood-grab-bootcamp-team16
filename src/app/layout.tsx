@@ -5,11 +5,12 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import Header from "@/components/common/header";
 import { useEffect } from "react";
+import StoreProvider from "@/components/StoreProvider";
 
-const fontSans = FontSans({ 
+const fontSans = FontSans({
   subsets: ["vietnamese"],
   weight: ["100", "300", "400", "500", "700", "900"],
- });
+});
 
 const metadata: Metadata = {
   title: "PickFood",
@@ -21,22 +22,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(()=>{
-    navigator.geolocation.getCurrentPosition((position)=>{
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
       console.log("Latitude is :", position.coords.latitude);
       console.log("Longitude is :", position.coords.longitude);
     })
   })
   return (
-    <html lang="en">
-      <body className={cn(
-        "relative flex flex-col h-screen justify-start items-center py-auto",
-        fontSans.className
-      )}>
-        <Header />
-        {children}
+    <StoreProvider>
+      <html lang="en">
+        <body className={cn(
+          "relative flex flex-col h-screen justify-start items-center py-auto",
+          fontSans.className
+        )}>
+          <Header />
+          {children}
         </body>
-    </html>
+      </html >
+    </StoreProvider>
   );
 }
 
