@@ -40,6 +40,7 @@ async function getDishes(recommendationList, category_sent_list) {
             {
                 $project: {
                     _id: 0, // Exclude the _id field
+                    id: 1,
                     name: 1,
                     imgLink: 1,
                     price: 1,
@@ -77,6 +78,7 @@ async function getDishes(recommendationList, category_sent_list) {
                 category: dishes[i].category,
                 category_id: dishes[i].category_list_id,
                 address: dishes[i].restaurants[0].address,
+                distance: 0,
                 rank: dishes[i].rank
             });
         }
