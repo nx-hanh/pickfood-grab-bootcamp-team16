@@ -8,7 +8,15 @@ export interface Dish {
   price: number;
   image: string;
   categories: string[];
+  category_id: number[];
   address: string;
+}
+export const isDish = (obj: any): obj is Dish => {
+  return (
+    obj && typeof obj === "object" && 
+    "id" in obj && typeof obj.id === "string" &&
+    "category_id" in obj && typeof obj.category_id === "string"
+  );
 }
 export interface LikedDish {
   dish: Dish;
@@ -73,7 +81,8 @@ export const dishesSlice = createAppSlice({
               description: dish.description,
               price: dish.price,
               image: dish.imgLink,
-              categories: dish.categories,
+              categories: dish.category,
+              category_id: dish.category_id,
               address: dish.address,
             };
           });

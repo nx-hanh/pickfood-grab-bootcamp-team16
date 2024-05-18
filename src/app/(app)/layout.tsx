@@ -21,32 +21,32 @@ export default function Layout({
         headers: {
           "Content-Type": "application/json",
           "Authorization": token || ""
-       },
+        },
         //TODO: send lat, long when change to server
       })
       const data = await response.json();
-      const dishData: Dish[] = data.dishes.map((card: any) => {
+      const dishData: Dish[] = data.dishes.map((dish: any) => {
         return {
-          id: card.id,
-          image: card.imgLink,
-          name: card.name,
-          address: card.address,
-          price: card.price.toString(),
-          description: card.description,
-          categories: card.categories,
+          id: dish.id,
+          name: dish.name,
+          description: dish.description,
+          price: dish.price,
+          image: dish.imgLink,
+          categories: dish.category,
+          category_id: dish.category_id,
+          address: dish.address,
         };
       });
       dispatch(addDishes(dishData));
     }
-    // if (typeof window !== "undefined") {
-    //   const token = localStorage.getItem("token");
-    //   if (!token) {
-    //     alert("Please sign in to continue");
-    //     router.push("/signin");
-    //   }
-    //   else fetchData(token);
-    // }
-    fetchData("eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw");
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please sign in to continue");
+        router.push("/signin");
+      }
+      else fetchData(token);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,10 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CardActionButtons from "@/components/home/CardActionButtons";
 import CardDeck from "@/components/home/CardDeck";
-import CardDeckSkeleton from "@/components/home/CardDeckSkeleton";
 import { useAppDispatch, } from "@/lib/hooks/redux";
-import { Dish, dishLiked, removeDish, selectRecommendedDishes, selectStatus } from "@/lib/redux/features/dishes/dishesSlice";
+import { Dish, dishLiked, isDish, removeDish } from "@/lib/redux/features/dishes/dishesSlice";
 const ACTIONS_TYPE = {
   LIKE: "like",
   DISLIKE: "dislike",
@@ -16,23 +15,49 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const [action, setAction] = useState<string>(ACTIONS_TYPE.NONE); //manage action for click button
   const [isSwiping, setIsSwiping] = useState<string>(ACTIONS_TYPE.NONE); //manage action for swipe card
+  const fetchReactDish = async (dish: Dish, action: string) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch("/api/reactdishes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+        body: JSON.stringify({
+          categories: dish.category_id,
+          like: action === ACTIONS_TYPE.LIKE,
+        }),
+      });
+      if (!response.ok) {
+        console.error("Error:", response.statusText);
+      }
+    }
+  }
   const handleAction = (action: string, dish: Dish) => {
-    //TODO: send action to server
     switch (action) {
       case ACTIONS_TYPE.LIKE:
-        dispatch(dishLiked(dish));
+        if (isDish(dish)) {
+          dispatch(dishLiked(dish));
+          fetchReactDish(dish, action);
+        }
         break;
       case ACTIONS_TYPE.SKIP:
-        dispatch(removeDish(dish));
+        if (isDish(dish)) {
+          dispatch(removeDish(dish));
+        }
         break;
       case ACTIONS_TYPE.DISLIKE:
-        dispatch(removeDish(dish));
+        if (isDish(dish)) {
+          dispatch(removeDish(dish));
+          fetchReactDish(dish, action);
+        }
         break;
       default:
         break;
     }
   };
- 
+
   return (
     <div className="relative h-full w-full max-w-screen-sm flex flex-col items-center justify-start">
       {/* {cards.length > 0 ? (<CardDeck

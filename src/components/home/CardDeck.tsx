@@ -182,15 +182,15 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
-  if (cardStore.length <= FETCH_API_WHEN && cardStore.length !== 0 && !isFetching) {
+  if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
     if (typeof window !== "undefined") {
-      // const token = localStorage.getItem("token");
-      const token = "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
+      const token = localStorage.getItem("token")
       token && dispatch(asyncUpdateDishes(token));
     }
   }
+  const isPrepareData = cardStore.length == 0;
   return (<>
-    {cards.length > 0 ? (
+    {!isPrepareData ? (
       <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
