@@ -16,6 +16,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
 import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 const FormSchema = z.object({
   email: z
@@ -29,6 +30,8 @@ const FormSchema = z.object({
 });
 
 const SignInForm = () => {
+  const [buttonClicked, setButtonClicked] = useState(false);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -50,8 +53,8 @@ const SignInForm = () => {
         password: values.password,
         newUser: false
         })
-      })
-  
+      })      
+      setButtonClicked(true);
       if(response.ok) {
         localStorage.setItem("token", (await response.json()).token);
         router.push('/home')
@@ -60,10 +63,17 @@ const SignInForm = () => {
       }
   };
 
+  const handleClick = () => {
+  };
+
   return (
+    <div>
+      <div className="header p-3 top-3">
+        <p className="flex flex-wrap text-4xl font-semibold"> Đăng nhập</p>
+      </div>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-        <div className='w-11/12 mx-4 space-y-2'>
+        <div className='mx-4 space-y-2'>
           <FormField
             control={form.control}
             name='email'
@@ -96,21 +106,22 @@ const SignInForm = () => {
           />
         </div>
         {/* <Button className='w-full mt-6 bg-green-600 border-2 border-green-600' type='submit'> */}
-        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 bg-green-600 border-2 border-green-600' type='submit'>
+        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 text-white bg-green-600 border-2 border-green-600' type='submit' disabled={buttonClicked}>
            Đăng nhập
         </Button>
       </form>
-      <div className='w-11/12 mx-4 my-4 flex items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
+      <div className='w-11/12 mx-4 my-4 text-xm flex items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-900 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-900'>
         hoặc
       </div>
       <GoogleSignInButton>Đăng nhập với Google</GoogleSignInButton>
-      <p className='text-center text-sm text-black mt-2'>
+      <p className='text-center text-xm text-black mt-2'>
         Nếu bạn chưa có tài khoản, hãy&nbsp;
         <Link className='text-blue-500 hover:underline' href='/signup'>
           đăng kí tại đây
         </Link>
       </p>
     </Form>
+    </div>
   );
 };
 
