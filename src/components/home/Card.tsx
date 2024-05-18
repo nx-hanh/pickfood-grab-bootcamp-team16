@@ -8,7 +8,7 @@ interface CardProps {
   image: string;
   name: string;
   address: string;
-  price: string;
+  price: number;
   categories: string[];
   description: string;
 }

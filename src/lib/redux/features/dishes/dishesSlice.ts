@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAppSlice } from "@/lib/redux/createAppSlice";
+import { PayloadAction, createSelector } from "@reduxjs/toolkit";
 
 export interface Dish {
   id: string;
@@ -11,53 +12,98 @@ export interface Dish {
 }
 export interface LikedDish {
   dish: Dish;
-  likedAt: Date;
+  likedAt: string;
 }
 export interface DishesState {
   dishes: Dish[];
+  recommendedDishes: Dish[];
   likedDishes: LikedDish[];
   status: "idle" | "loading" | "failed";
 }
 
 const initialState: DishesState = {
   dishes: [],
+  recommendedDishes: [],
   likedDishes: [],
   status: "idle",
 };
 
-export const dishesSlice = createSlice({
+export const dishesSlice = createAppSlice({
   name: "dishes",
   initialState,
-  reducers: {
-    dishesLoading(state) {
-      state.status = "loading";
-    },
-    dishesReceived(state, action) {
+  reducers: (create) => ({
+    addDishes: create.reducer((state, action: PayloadAction<Dish[]>) => {
+      state.recommendedDishes = state.recommendedDishes.concat(action.payload);
       state.dishes = action.payload;
-      state.status = "idle";
-    },
-    dishLiked(state, action) {
-      state.likedDishes.push(action.payload);
-    },
-    dishUnLiked(state, action) {
-      state.likedDishes = state.likedDishes.filter(
-        (likedDish) => likedDish.dish.id !== action.payload
+    }),
+    dishLiked: create.reducer((state, action: PayloadAction<Dish>) => {
+      const date = new Date();
+      const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      state.likedDishes.push({ dish: action.payload, likedAt: likeDate });
+      state.recommendedDishes = state.recommendedDishes.filter(
+        (dish) => dish.id !== action.payload.id
       );
-    },
-    addDishes(state, action) {
-        state.dishes.push(...action.payload);
+    }),
+    removeDish: create.reducer((state, action: PayloadAction<Dish>) => {
+      state.recommendedDishes = state.recommendedDishes.filter(
+        (dish) => dish.id !== action.payload.id
+      );
+    }),
+    asyncUpdateDishes: create.asyncThunk(
+      async (token: string) => {
+        const response = await fetch("/api/getdishes", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        });
+        return response.json().then((data) => data.dishes);
+      },
+      {
+        pending: (state) => {
+          state.status = "loading";
         },
-    removeDish(state, action) {
-        state.dishes = state.dishes.filter((dish) => dish.id !== action.payload);
-    },
-  },
+        fulfilled: (state, action) => {
+          state.status = "idle";
+          const newDishes = action.payload.map((dish: any) => {
+            return {
+              id: dish.id,
+              name: dish.name,
+              description: dish.description,
+              price: dish.price,
+              image: dish.imgLink,
+              categories: dish.categories,
+              address: dish.address,
+            };
+          });
+          state.dishes = newDishes;
+          state.recommendedDishes = state.recommendedDishes.concat(newDishes);
+        },
+        rejected: (state) => {
+          state.status = "failed";
+        },
+      }
+    ),
+  }),
   selectors: {
     selectDishes: (dishes) => dishes.dishes,
+    selectRecommendedDishes: createSelector([dishes => dishes.recommendedDishes], (recommendedDishes) => recommendedDishes.slice().reverse()),
     selectLikedDishes: (dishes) => dishes.likedDishes,
     selectStatus: (dishes) => dishes.status,
   },
 });
 
-export const {dishesLoading, dishesReceived, dishLiked, dishUnLiked, addDishes, removeDish} = dishesSlice.actions;
+export const {
+  addDishes,
+  dishLiked,
+  removeDish,
+  asyncUpdateDishes,
+} = dishesSlice.actions;
 
-export const {selectDishes, selectLikedDishes, selectStatus} = dishesSlice.selectors;
+export const {
+  selectDishes,
+  selectRecommendedDishes,
+  selectLikedDishes,
+  selectStatus,
+} = dishesSlice.selectors;
