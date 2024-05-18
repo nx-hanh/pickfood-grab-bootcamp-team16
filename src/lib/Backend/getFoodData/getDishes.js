@@ -1,6 +1,6 @@
 const database = require('@/lib/Backend/database/Database.js');
 const Dish = require('@/models/dishSchema.js');
-const limit_dishes = 10;
+const limit_dishes = 50;
 const limit_dishes_category = limit_dishes / 5;
 
 async function getDishes(recommendationList, category_sent_list) {
