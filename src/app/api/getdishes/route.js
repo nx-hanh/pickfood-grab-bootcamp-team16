@@ -6,7 +6,6 @@ const cookies_age = 600; // 10 minutes
 
 export async function GET(request) {
     let decoded = JSON.parse(request.headers.get('decoded'));
-    
     let category_sent_list = null;
     let sessionID = null;
     try {

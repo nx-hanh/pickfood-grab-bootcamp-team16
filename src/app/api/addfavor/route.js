@@ -1,12 +1,17 @@
 const updateFavorites = require('@/lib/Backend/database/updateUser.js');
 const jsonHeader = require('@/lib/Backend/header/jsonHeader.js');
-const { verifyToken } = require('@/lib/Backend/authentication/jwt.js');
+const filterCategory = require('@/lib/Backend/database/filterCategory.js');
 
 export async function POST(request) {
     let userData = await request.json();
     let decoded = request.headers.get('decoded');
     decoded = JSON.parse(decoded);
-    let updateStatus = await updateFavorites(decoded.email, userData.favorites);
+    userData.favorites = await filterCategory(userData.favorites);
+    let favorites = []
+    for (let i = 0; i < userData.favorites.length; i++) {
+        favorites.push([Number(userData.favorites[i]), 1]);
+    }
+    let updateStatus = await updateFavorites(decoded.email, favorites);
     let status = {
         "status": updateStatus
     }

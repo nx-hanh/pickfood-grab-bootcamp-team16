@@ -1,8 +1,9 @@
 // lib/sessionStore.js
 const { v4: uuidv4 } = require('uuid');
 
-const sessions = new Map();
-const sessionTimeouts = new Map();
+let sessions = global.sessions;
+let sessionTimeouts = global.sessionTimeouts;
+
 const sessionExpirationTime = 1800000; // 30 minutes
 
 function generateSessionID() {
@@ -25,9 +26,19 @@ function getSession(sessionID) {
     return null;
 }
 
+function updateSession(sessionID, data) {
+    if (sessions.has(sessionID)) {
+        sessions.get(sessionID).data = data;
+        resetSessionTimeout(sessionID); // Reset expiration timeout
+        return true;
+    }
+    return false;
+}
+
 function deleteSession(sessionID) {
     clearTimeout(sessionTimeouts.get(sessionID)); // Clear existing timeout
     sessionTimeouts.delete(sessionID); // Remove from timeouts map
+    console.log(`Deleted session ${sessionID}`)
     return sessions.delete(sessionID); // Delete from sessions map
 }
 
@@ -43,4 +54,4 @@ function resetSessionTimeout(sessionID) {
     setSessionTimeout(sessionID, sessionExpirationTime); // Reset expiration time to 30 hour
 }
 
-module.exports = { createSession, getSession };
+module.exports = { createSession, getSession, updateSession };
