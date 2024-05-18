@@ -32,8 +32,7 @@ const to = (i: number) => ({
 const from = (_i: number) => ({ x: 0, rot: 0, scale: 1, y: 0 });
 // This is being used down there in the view, it interpolates rotation and scale into a css transform
 const trans = (r: number, s: number) =>
-  `perspective(1500px) rotateX(0deg) rotateY(${r / 10
-  }deg) rotateZ(${r}deg) scale(${s})`;
+  `perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(${r}deg) scale(${s})`;
 
 const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, handleAction }) => {
   const cardStore = useAppSelector(selectRecommendedDishes);
@@ -191,7 +190,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
   const isPrepareData = cardStore.length == 0;
   return (<>
     {!isPrepareData ? (
-      <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none">
+      <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto touch-none">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
             key={index}

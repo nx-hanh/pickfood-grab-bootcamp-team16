@@ -23,7 +23,7 @@ const Card: FC<CardProps> = ({
 }) => {
   const imgSrc = image ? image : "/logo.svg";
   return (
-    <div className="relative flex flex-col bg-[#18191A] h-full w-full select-none cursor-pointer">
+    <div className="relative h-full flex flex-col bg-[#18191A] w-full select-none cursor-pointer">
       <div className="h-80 w-full">
         <Image
           src={imgSrc}
