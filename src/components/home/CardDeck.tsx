@@ -14,6 +14,7 @@ const ACTIONS_TYPE = {
 }
 const UPDATE_DECK_WHEN = 1;
 const FETCH_API_WHEN = 20;
+const NUMBER_RECOMMENDED = 20;
 
 interface CardDeckProps {
   action: string;//handle action button click
@@ -41,7 +42,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
   const [cards, setCards] = useState<Dish[]>([]);
   useEffect(() => {
     if (cards.length < 1 && cardStore.length > 1) {
-      setCards(cardStore);
+      setCards(cardStore.slice(-NUMBER_RECOMMENDED));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardStore, cards.length]);
@@ -107,8 +108,8 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
   );
   const handleFewCard = () => {
-    const newCards = cardStore.slice(0, cardStore.length - 1 - UPDATE_DECK_WHEN);
-    setCards(newCards);
+    const newCards = cardStore.slice(0, cardStore.length - 1);
+    setCards(newCards.slice(-NUMBER_RECOMMENDED))
     gone.clear();
   };
   //this is for action button click
@@ -120,7 +121,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * 1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * 1 : 0;
         const rot = 0 / 100 + (isGone ? 1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -142,7 +143,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * -1 : 0;
         const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -164,7 +165,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * -1 : 0;
         const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -190,7 +191,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
   const isPrepareData = cardStore.length == 0;
   return (<>
     {!isPrepareData ? (
-      <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto touch-none">
+      <div className="relative h-full w-screen flex justify-center items-center max-w-screen-sm mx-auto touch-none">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
             key={index}

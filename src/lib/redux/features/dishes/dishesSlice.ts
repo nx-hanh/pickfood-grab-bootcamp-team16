@@ -15,7 +15,7 @@ export const isDish = (obj: any): obj is Dish => {
   return (
     obj && typeof obj === "object" && 
     "id" in obj && typeof obj.id === "string" &&
-    "category_id" in obj && typeof obj.category_id === "string"
+    "category_id" in obj 
   );
 }
 export interface LikedDish {
@@ -100,7 +100,7 @@ export const dishesSlice = createAppSlice({
     selectRecommendedDishes: createSelector([dishes => dishes.recommendedDishes], (recommendedDishes) => recommendedDishes.slice().reverse()),
     selectLikedDishes: (dishes) => dishes.likedDishes,
     selectStatus: (dishes) => dishes.status,
-  },
+    },
 });
 
 export const {

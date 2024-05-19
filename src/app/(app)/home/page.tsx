@@ -60,13 +60,6 @@ const Home = () => {
 
   return (
     <div className="relative h-full w-full max-w-screen-sm flex flex-col items-center justify-start">
-      {/* {cards.length > 0 ? (<CardDeck
-        action={action}
-        setAction={setAction}
-        setIsSwiping={setIsSwiping}
-        handleAction={handleAction}
-      />) : (
-        <CardDeckSkeleton />)} */}
       <CardDeck
         action={action}
         setAction={setAction}
