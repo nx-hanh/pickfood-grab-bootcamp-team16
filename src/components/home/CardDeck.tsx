@@ -185,7 +185,8 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
   if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("token")
-      token && dispatch(asyncUpdateDishes(token));
+      const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+      if(isTokenExist)  dispatch(asyncUpdateDishes(token));
     }
   }
   const isPrepareData = cardStore.length == 0;
