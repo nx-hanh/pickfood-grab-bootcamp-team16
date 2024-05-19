@@ -13,11 +13,13 @@ export interface Dish {
 }
 export const isDish = (obj: any): obj is Dish => {
   return (
-    obj && typeof obj === "object" && 
-    "id" in obj && typeof obj.id === "string" &&
-    "category_id" in obj 
+    obj &&
+    typeof obj === "object" &&
+    "id" in obj &&
+    typeof obj.id === "string" &&
+    "category_id" in obj
   );
-}
+};
 export interface LikedDish {
   dish: Dish;
   likedAt: string;
@@ -58,8 +60,17 @@ export const dishesSlice = createAppSlice({
       );
     }),
     asyncUpdateDishes: create.asyncThunk(
-      async (token: string) => {
-        const response = await fetch("/api/getdishes", {
+      async ({
+        lat,
+        long,
+        token,
+      }: {
+        lat: number;
+        long: number;
+        token: string;
+      }) => {
+        const url = `/api/getdishes?lat=${lat}&long=${long}`;
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -97,18 +108,17 @@ export const dishesSlice = createAppSlice({
   }),
   selectors: {
     selectDishes: (dishes) => dishes.dishes,
-    selectRecommendedDishes: createSelector([dishes => dishes.recommendedDishes], (recommendedDishes) => recommendedDishes.slice().reverse()),
+    selectRecommendedDishes: createSelector(
+      [(dishes) => dishes.recommendedDishes],
+      (recommendedDishes) => recommendedDishes.slice().reverse()
+    ),
     selectLikedDishes: (dishes) => dishes.likedDishes,
     selectStatus: (dishes) => dishes.status,
-    },
+  },
 });
 
-export const {
-  addDishes,
-  dishLiked,
-  removeDish,
-  asyncUpdateDishes,
-} = dishesSlice.actions;
+export const { addDishes, dishLiked, removeDish, asyncUpdateDishes } =
+  dishesSlice.actions;
 
 export const {
   selectDishes,

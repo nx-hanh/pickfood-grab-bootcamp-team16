@@ -25,6 +25,7 @@ const Home = () => {
           "Authorization": token,
         },
         body: JSON.stringify({
+          dish_id: dish.id,
           categories: dish.category_id,
           like: action === ACTIONS_TYPE.LIKE,
         }),

@@ -183,11 +183,17 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
   if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token")
-      const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
-      if(isTokenExist)  dispatch(asyncUpdateDishes(token));
-    }
+    navigator.geolocation.getCurrentPosition((position) => {
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token")
+        const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+        if(isTokenExist)  dispatch(asyncUpdateDishes({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+          token: token
+        }));
+      }
+    })
   }
   const isPrepareData = cardStore.length == 0;
   return (<>
