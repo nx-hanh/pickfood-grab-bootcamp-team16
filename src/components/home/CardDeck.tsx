@@ -94,8 +94,9 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
           setReadyGone(-1);
         }
         //when card is not swipe enough or not active, reset isSwiping
-        if ((x < 100 && x > -100 && !active) || isGone) {
+        if (mx < 100 && mx > -100 || isGone) {
           setIsSwiping(ACTIONS_TYPE.NONE);
+          setReadyGone(0);
         }
         return {
           x,
@@ -183,18 +184,47 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
+
   if (cardStore.length <= FETCH_API_WHEN && storeStatus !== "loading" && storeStatus !== "nomore") {
-    navigator?.geolocation.getCurrentPosition((position) => {
-      if (typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
+      const fetchNoLocation = () => {
         const token = localStorage.getItem("token")
         const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
         if (isTokenExist) dispatch(asyncUpdateDishes({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
+          lat: -1,
+          long: -1,
           token: token
         }));
       }
-    })
+      const fetchLocation = (lat: number, long: number) => {
+        const token = localStorage.getItem("token")
+        const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+        if (isTokenExist) dispatch(asyncUpdateDishes({
+          lat: lat,
+          long: long,
+          token: token
+        }));
+      }
+      if (navigator.geolocation) {
+        navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
+          if (permissionStatus.state === 'prompt') {
+            navigator.geolocation.getCurrentPosition((position) => {
+              fetchLocation(position.coords.latitude, position.coords.longitude);
+            }, () => {
+              fetchNoLocation();
+            })
+          }
+          else if (permissionStatus.state === 'denied') {
+            fetchNoLocation();
+          }
+          else {
+            navigator.geolocation.getCurrentPosition((position) => {
+              fetchLocation(position.coords.latitude, position.coords.longitude);
+            })
+          }
+        });
+      }
+    }
   }
   const isPrepareData = cardStore.length !== 0;
   useEffect(() => {
@@ -227,10 +257,13 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
           </animated.div>
         ))}
       </div>) : (
-      storeStatus === "loading" ? <CardDeckSkeleton /> : <div className="h-full w-full flex flex-col items-center justify-center">
-        <p className="font-semibold">Hiện tại không tìm thấy thêm món ăn phù hợp!</p>
-        <p>Hãy quay lại sau!</p>
-      </div>)
+      <>
+        {storeStatus === "loading" && <CardDeckSkeleton />}
+        {storeStatus === "nomore" && <div className="h-full w-full flex flex-col items-center justify-center">
+          <p className="font-semibold">Hiện tại không tìm thấy thêm món ăn phù hợp!</p>
+          <p>Hãy quay lại sau!</p>
+        </div>}
+      </>)
     }</>
   );
 };

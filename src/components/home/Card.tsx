@@ -25,7 +25,7 @@ const Card: FC<CardProps> = ({
 }) => {
   const imgSrc = image ? image : "/logo.svg";
   const priceInFormatted = new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)
-  const distanceInFormatted = distance < 1 ? `${Math.round(distance * 1000)} m` : `${Math.floor(distance)} km ${Math.round((distance - Math.floor(distance)) * 1000)} m`
+  const distanceInFormatted = distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(2)} km`
   return (
     <div className="relative h-full flex flex-col bg-[#18191A] w-full select-none cursor-pointer">
       <div className="h-80 w-full">
@@ -73,9 +73,9 @@ const Card: FC<CardProps> = ({
             src="/app-price-icon.svg"
             height={0}
             width={0}
-            className="row-start-3 col-span-1 object-cover w-full h-full max-h-[25px] max-w-[25px] "
+            className={`${distance === -1 ? 'row-start-2' : 'row-start-3'} col-span-1 object-cover w-full h-full max-h-[25px] max-w-[25px] `}
           />
-          <p className="row-start-3 col-start-2 col-span-9 text-white text-lg w-full line-clamp-1">
+          <p className={`${distance === -1 ? 'row-start-2' : 'row-start-3'} col-start-2 col-span-9 text-white text-lg w-full line-clamp-1`}>
             {priceInFormatted}
           </p>
         </div>

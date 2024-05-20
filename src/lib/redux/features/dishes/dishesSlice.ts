@@ -29,7 +29,7 @@ export interface DishesState {
   dishes: Dish[];
   recommendedDishes: Dish[];
   likedDishes: LikedDish[];
-  status: "idle" | "loading" | "failed" | "nomore"
+  status: "idle" | "loading" | "failed" | "nomore";
   isFetchLikedDishes: "init" | "idle" | "loading" | "failed";
 }
 
@@ -83,7 +83,10 @@ export const dishesSlice = createAppSlice({
         long: number;
         token: string;
       }) => {
-        const url = `/api/getdishes?lat=${lat}&long=${long}`;
+        const locationAcceptable = lat !== -1 && long !== -1;
+        const url = locationAcceptable
+          ? `/api/getdishes?lat=${lat}&long=${long}`
+          : `/api/getdishes`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
