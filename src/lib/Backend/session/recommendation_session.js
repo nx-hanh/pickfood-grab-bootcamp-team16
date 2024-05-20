@@ -1,4 +1,4 @@
-const { createSession, getSession, useSessionData } = require('@/lib/Backend/session/session.js');
+const { createSession, getSession, saveSessionData } = require('@/lib/Backend/session/session.js');
 const getRecommendation = require('@/lib/Backend/recommendation/recommendation.js');
 
 
@@ -7,7 +7,7 @@ async function extract_recommendation(userdata, sessionID) {
     if (sessionID != null) {
         let sessionData = getSession(sessionID);
         if (sessionData != null) {
-            if (sessionData.cnt_changes >= 3) useSessionData(sessionData);
+            if (sessionData.cnt_changes >= 3) saveSessionData(sessionData);
             return [sessionID, sessionData.recommendationList];
         }
         console.log("Invalid sessionID, creating new session\n");
