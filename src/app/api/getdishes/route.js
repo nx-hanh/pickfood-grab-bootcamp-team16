@@ -6,6 +6,10 @@ const cookies_age = 600; // 10 minutes
 
 export async function GET(request) {
     let decoded = JSON.parse(request.headers.get('decoded'));
+    const url = new URL(request.url);
+    const search_params = new URLSearchParams(url.searchParams);
+    let lat = search_params.get("lat");
+    let long = search_params.get("long");
     let category_sent_list = null;
     let sessionID = null;
     try {
@@ -21,7 +25,7 @@ export async function GET(request) {
     sessionID = extractData[0];
     let recommendationList = extractData[1];
 
-    let dishesDetail = await getDish(recommendationList, category_sent_list);
+    let dishesDetail = await getDish(recommendationList, category_sent_list, lat, long);
     let result = {
         "dishes": dishesDetail[0]
     }
