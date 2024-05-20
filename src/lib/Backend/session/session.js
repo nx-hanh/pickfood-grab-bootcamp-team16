@@ -1,7 +1,7 @@
 // lib/sessionStore.js
 const { v4: uuidv4 } = require('uuid');
 const updateFavorites = require('@/lib/Backend/database/updateUser.js');
-const getRecommendation = require('@/lib/Backend/recommendation/Recommendation.js');
+const getRecommendation = require('@/lib/Backend/recommendation/recommendation.js');
 
 let sessions = global.sessions;
 let sessionTimeouts = global.sessionTimeouts;

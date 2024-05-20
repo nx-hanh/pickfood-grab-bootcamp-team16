@@ -21,6 +21,7 @@ export async function POST(request) {
     let userData = await request.json();
     userData.categories = await filterCategory(userData.categories);
 
+    
     let updateStatus = await updateUserRating(sessionID, userData.categories, userData.like, decoded.email);
     if (!updateStatus) {
         status = {
