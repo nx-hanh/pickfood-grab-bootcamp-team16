@@ -1,10 +1,13 @@
-const { createSession, getSession } = require('@/lib/Backend/session/session.js');
+const { createSession, getSession, useSessionData } = require('@/lib/Backend/session/session.js');
 const getRecommendation = require('@/lib/Backend/recommendation/recommendation.js');
+
+
 
 async function extract_recommendation(userdata, sessionID) {
     if (sessionID != null) {
         let sessionData = getSession(sessionID);
         if (sessionData != null) {
+            if (sessionData.cnt_changes >= 3) useSessionData(sessionData);
             return [sessionID, sessionData.recommendationList];
         }
         console.log("Invalid sessionID, creating new session\n");
@@ -14,12 +17,11 @@ async function extract_recommendation(userdata, sessionID) {
     let recommendationList = recommendation_result[0];
     let user_favorites = recommendation_result[1];
     let sessionData = {
-        recommendationList: recommendationList,
         user_favorites: user_favorites,
+        email: userdata.email,
+        recommendationList: recommendationList,
         cnt_changes: 0
     };
-    // sessionData.user_favorites.loop();
-    // console.log(`user_favorites: ${sessionData.user_favorites}`);
     sessionID = createSession(sessionData);
     return [sessionID, recommendationList];
 }
