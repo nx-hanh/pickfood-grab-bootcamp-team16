@@ -10,6 +10,7 @@ export interface Dish {
   categories: string[];
   category_id: number[];
   address: string;
+  distance: number;
 }
 export const isDish = (obj: any): obj is Dish => {
   return (
@@ -29,7 +30,7 @@ export interface DishesState {
   recommendedDishes: Dish[];
   likedDishes: LikedDish[];
   status: "idle" | "loading" | "failed";
-  isFetchLikedDishes: "idle" | "loading" | "failed";
+  isFetchLikedDishes: "init" | "idle" | "loading" | "failed";
 }
 
 const initialState: DishesState = {
@@ -37,7 +38,7 @@ const initialState: DishesState = {
   recommendedDishes: [],
   likedDishes: [],
   status: "idle",
-  isFetchLikedDishes: "idle",
+  isFetchLikedDishes: "init",
 };
 
 export const dishesSlice = createAppSlice({
@@ -108,6 +109,7 @@ export const dishesSlice = createAppSlice({
               categories: dish.category,
               category_id: dish.category_id,
               address: dish.address,
+              distance: dish.distance,
             };
           });
           state.dishes = newDishes;
@@ -120,7 +122,7 @@ export const dishesSlice = createAppSlice({
     ),
     asyncFetchLikedDishes: create.asyncThunk(
       async (token: string) => {
-        const url = `/api/likedDish`;
+        const url = `/api/getfoodloved`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -128,13 +130,53 @@ export const dishesSlice = createAppSlice({
             Authorization: `${token}`,
           },
         });
-        return response.json().then((data) => data.dishes);
+        return response.json().then((data) => data);
       },
       {
         pending: (state) => {
           state.isFetchLikedDishes = "loading";
         },
         fulfilled: (state, action) => {
+          const likedDishes = action.payload.reducer(
+            (acc: LikedDish[], dish: any) => {
+              const date = new Date(dish.timeStamp);
+              const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+              const likedDish = acc.find((d) => d.date === likeDate);
+              if (likedDish) {
+                likedDish.dishes.push({
+                  id: dish.id,
+                  name: dish.name,
+                  description: dish.description,
+                  price: dish.price,
+                  image: dish.imgLink,
+                  categories: dish.category,
+                  category_id: dish.category_id,
+                  address: dish.address,
+                  distance: dish.distance,
+                });
+              } else {
+                acc.push({
+                  date: likeDate,
+                  dishes: [
+                    {
+                      id: dish.id,
+                      name: dish.name,
+                      description: dish.description,
+                      price: dish.price,
+                      image: dish.imgLink,
+                      categories: dish.category,
+                      category_id: dish.category_id,
+                      address: dish.address,
+                      distance: dish.distance,
+                    },
+                  ],
+                });
+              }
+              return acc;
+            },
+            []
+          );
+          state.likedDishes = likedDishes;
           state.isFetchLikedDishes = "idle";
         },
         rejected: (state) => {

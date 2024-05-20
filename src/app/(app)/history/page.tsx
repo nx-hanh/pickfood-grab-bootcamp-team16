@@ -2,12 +2,11 @@
 import HistorySkeleton from '@/components/history/HistorySkeleton'
 import LikedDishGroup from '@/components/history/LikedDishGroup'
 import { Button } from '@/components/ui/button'
-import { useAppSelector } from '@/lib/hooks/redux'
-import { LikedDish, selectIsFetchLikedDishes, selectLikedDishes } from '@/lib/redux/features/dishes/dishesSlice'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks/redux'
+import { LikedDish, asyncFetchLikedDishes, selectIsFetchLikedDishes, selectLikedDishes } from '@/lib/redux/features/dishes/dishesSlice'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 
 
 interface pageProps {
@@ -17,10 +16,21 @@ interface pageProps {
 const Page: FC<pageProps> = ({ }) => {
   const router = useRouter();
   const likedDishes = useAppSelector(selectLikedDishes);
+  const dispatch = useAppDispatch();
   const isFetchLikedDishes = useAppSelector(selectIsFetchLikedDishes);
   const likedDishesSorted = likedDishes.sort((a: LikedDish, b: LikedDish) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime()
   })
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token")
+      const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+      if (isFetchLikedDishes === 'init' && isTokenExist) {
+        dispatch(asyncFetchLikedDishes(token));
+      }
+    }
+    //eslint-disable-next-line
+  }, []);
   if (isFetchLikedDishes === 'failed') throw Error();
   return <div
     className='h-full w-screen flex flex-col justify-start items-center max-w-screen-sm mx-auto bg-[#F4F5F9]'
