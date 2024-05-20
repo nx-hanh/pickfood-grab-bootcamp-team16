@@ -24,7 +24,7 @@ export default function RootLayout({
     <StoreProvider>
       <html lang="en">
         <body className={cn(
-          "relative h-svh flex flex-col justify-start items-center py-auto",
+          "relative h-svh max-h-svh flex flex-col justify-start items-center py-auto",
           fontSans.className
         )}>
           <Header />

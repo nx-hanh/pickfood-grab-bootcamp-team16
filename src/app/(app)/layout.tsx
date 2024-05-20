@@ -22,7 +22,7 @@ export default function Layout({
   }, []);
 
   return (
-    <div className="h-full flex flex-col w-screen justify-start items-center">
+    <div className="h-full flex flex-col w-screen justify-start items-center flex-1 overflow-hidden">
       {children}
       <div className="absolute bottom-0 w-full flex justify-center items-center">
         <AppMenu />

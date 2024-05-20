@@ -22,6 +22,7 @@ const Card: FC<CardProps> = ({
   description
 }) => {
   const imgSrc = image ? image : "/logo.svg";
+  const priceInFormatted = new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)
   return (
     <div className="relative h-full flex flex-col bg-[#18191A] w-full select-none cursor-pointer">
       <div className="h-80 w-full">
@@ -58,7 +59,7 @@ const Card: FC<CardProps> = ({
             className="row-start-2 col-span-1 object-cover w-full h-full max-h-[25px] max-w-[25px] "
           />
           <p className="row-start-2 col-start-2 col-span-9 text-white text-lg w-full line-clamp-1">
-            {price} vnđ
+            {priceInFormatted}
           </p>
         </div>
       </div>

@@ -37,7 +37,8 @@ const trans = (r: number, s: number) =>
 
 const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, handleAction }) => {
   const cardStore = useAppSelector(selectRecommendedDishes);
-  const isFetching = useAppSelector(selectStatus) === "loading";
+  const storeStatus = useAppSelector(selectStatus);
+
   const dispatch = useAppDispatch();
   const [cards, setCards] = useState<Dish[]>([]);
   useEffect(() => {
@@ -182,12 +183,12 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
-  if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
+  if (cardStore.length <= FETCH_API_WHEN && storeStatus !== "loading") {
     navigator.geolocation.getCurrentPosition((position) => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token")
         const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
-        if(isTokenExist)  dispatch(asyncUpdateDishes({
+        if (isTokenExist) dispatch(asyncUpdateDishes({
           lat: position.coords.latitude,
           long: position.coords.longitude,
           token: token
@@ -195,9 +196,15 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       }
     })
   }
-  const isPrepareData = cardStore.length == 0;
+  const isPrepareData = cardStore.length !== 0;
+  useEffect(()=>{
+    if(storeStatus === "failed" && !isPrepareData){
+      throw Error();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeStatus])
   return (<>
-    {!isPrepareData ? (
+    {isPrepareData ? (
       <div className="relative h-full w-screen flex justify-center items-center max-w-screen-sm mx-auto touch-none">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div

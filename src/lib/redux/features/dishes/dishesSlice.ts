@@ -21,14 +21,15 @@ export const isDish = (obj: any): obj is Dish => {
   );
 };
 export interface LikedDish {
-  dish: Dish;
-  likedAt: string;
+  dishes: Dish[];
+  date: string;
 }
 export interface DishesState {
   dishes: Dish[];
   recommendedDishes: Dish[];
   likedDishes: LikedDish[];
   status: "idle" | "loading" | "failed";
+  isFetchLikedDishes: "idle" | "loading" | "failed";
 }
 
 const initialState: DishesState = {
@@ -36,6 +37,7 @@ const initialState: DishesState = {
   recommendedDishes: [],
   likedDishes: [],
   status: "idle",
+  isFetchLikedDishes: "idle",
 };
 
 export const dishesSlice = createAppSlice({
@@ -49,10 +51,21 @@ export const dishesSlice = createAppSlice({
     dishLiked: create.reducer((state, action: PayloadAction<Dish>) => {
       const date = new Date();
       const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-      state.likedDishes.push({ dish: action.payload, likedAt: likeDate });
+      const likedDish = state.likedDishes.find(
+        (dish) => dish.date === likeDate
+      );
+      if (likedDish) {
+        likedDish.dishes.push(action.payload);
+      } else {
+        state.likedDishes.push({
+          date: likeDate,
+          dishes: [action.payload],
+        });
+      }
       state.recommendedDishes = state.recommendedDishes.filter(
         (dish) => dish.id !== action.payload.id
       );
+      state.isFetchLikedDishes = "idle";
     }),
     removeDish: create.reducer((state, action: PayloadAction<Dish>) => {
       state.recommendedDishes = state.recommendedDishes.filter(
@@ -105,6 +118,30 @@ export const dishesSlice = createAppSlice({
         },
       }
     ),
+    asyncFetchLikedDishes: create.asyncThunk(
+      async (token: string) => {
+        const url = `/api/likedDish`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        });
+        return response.json().then((data) => data.dishes);
+      },
+      {
+        pending: (state) => {
+          state.isFetchLikedDishes = "loading";
+        },
+        fulfilled: (state, action) => {
+          state.isFetchLikedDishes = "idle";
+        },
+        rejected: (state) => {
+          state.isFetchLikedDishes = "failed";
+        },
+      }
+    ),
   }),
   selectors: {
     selectDishes: (dishes) => dishes.dishes,
@@ -114,15 +151,22 @@ export const dishesSlice = createAppSlice({
     ),
     selectLikedDishes: (dishes) => dishes.likedDishes,
     selectStatus: (dishes) => dishes.status,
+    selectIsFetchLikedDishes: (dishes) => dishes.isFetchLikedDishes,
   },
 });
 
-export const { addDishes, dishLiked, removeDish, asyncUpdateDishes } =
-  dishesSlice.actions;
+export const {
+  addDishes,
+  dishLiked,
+  removeDish,
+  asyncUpdateDishes,
+  asyncFetchLikedDishes,
+} = dishesSlice.actions;
 
 export const {
   selectDishes,
   selectRecommendedDishes,
   selectLikedDishes,
   selectStatus,
+  selectIsFetchLikedDishes,
 } = dishesSlice.selectors;

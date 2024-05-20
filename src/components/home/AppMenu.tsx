@@ -13,7 +13,7 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
     { src: "/app-menu-all-icon.svg", alt: "all", link: "/all" , isDevelop: false },
     { src: "/app-menu-temphobby-icon.svg", alt: "temp", link: "/temp-hobby", isDevelop: false},
     { src: "/app-menu-home-icon.svg", alt: "home", link: "/home", size: 65 , isDevelop: true},
-    { src: "/app-menu-history-icon.svg", alt: "history", link: "/history", isDevelop: false },
+    { src: "/app-menu-history-icon.svg", alt: "history", link: "/history", isDevelop: true },
     { src: "/app-menu-user-icon.svg", alt: "user", link: "/user"  , isDevelop: true },
   ];
   const handleClick = (link: string) => {
