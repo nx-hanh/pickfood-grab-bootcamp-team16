@@ -1,68 +1,57 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CardActionButtons from "@/components/home/CardActionButtons";
 import CardDeck from "@/components/home/CardDeck";
-import CardDeckSkeleton from "@/components/home/CardDeckSkeleton";
+import { useAppDispatch, } from "@/lib/hooks/redux";
+import { Dish, dishLiked, isDish, removeDish } from "@/lib/redux/features/dishes/dishesSlice";
 const ACTIONS_TYPE = {
   LIKE: "like",
   DISLIKE: "dislike",
   SKIP: "skip",
   NONE: "none",
 };
-interface Card {
-  id: string;
-  image: string;
-  name: string;
-  address: string;
-  price: string;
-  description: string;
-  categories: string[];
-}
 
 const Home = () => {
-  //TODO: cards should be fetched from server and store in redux not in state
-  const [cards, setCards] = useState<Card[]>([]);
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch("/api/getdishes", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": "Bearer " + localStorage.getItem("token"),
-          Authorization:
-            "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..KTokkVdOFHJcHSxKhQNSMQ.DfrW16Xa_qvjxPdLBWOVMT-ZW_l40CUe-RMozAZTDyo.1c_l2vxId23RD_UWF8R5HA",
-        },
-        //TODO: send lat, long when change to server
-      })
-      const data = await response.json();
-      const cardData: Card[] = data.dishes.map((card: any) => {
-        return {
-          id: card.id,
-          image: card.imgLink,
-          name: card.name,
-          address: card.address,
-          price: card.price.toString(),
-          description: card.description,
-          categories: card.categories,
-        };
-      });
-      setCards(cardData.reverse());
-    }
-    fetchData();
-  }, []);
+  const dispatch = useAppDispatch();
   const [action, setAction] = useState<string>(ACTIONS_TYPE.NONE); //manage action for click button
   const [isSwiping, setIsSwiping] = useState<string>(ACTIONS_TYPE.NONE); //manage action for swipe card
-  const handleAction = (action: string) => {
-    //TODO: send action to server
+  const fetchReactDish = async (dish: Dish, action: string) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token") || "";
+      const response = await fetch("/api/reactdishes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+        body: JSON.stringify({
+          categories: dish.category_id,
+          like: action === ACTIONS_TYPE.LIKE,
+        }),
+      });
+      if (!response.ok) {
+        console.error("Error:", response.statusText);
+      }
+    }
+  }
+  const handleAction = (action: string, dish: Dish) => {
     switch (action) {
       case ACTIONS_TYPE.LIKE:
-        console.log("like");
+        if (isDish(dish)) {
+          dispatch(dishLiked(dish));
+          fetchReactDish(dish, action);
+        }
         break;
       case ACTIONS_TYPE.SKIP:
-        console.log("skip");
+        if (isDish(dish)) {
+          dispatch(removeDish(dish));
+        }
         break;
       case ACTIONS_TYPE.DISLIKE:
-        console.log("dislike");
+        if (isDish(dish)) {
+          dispatch(removeDish(dish));
+          fetchReactDish(dish, action);
+        }
         break;
       default:
         break;
@@ -71,14 +60,19 @@ const Home = () => {
 
   return (
     <div className="relative h-full w-full max-w-screen-sm flex flex-col items-center justify-start">
-      {cards.length > 0 ? (<CardDeck
-        cards={cards}
+      {/* {cards.length > 0 ? (<CardDeck
         action={action}
         setAction={setAction}
         setIsSwiping={setIsSwiping}
         handleAction={handleAction}
       />) : (
-        <CardDeckSkeleton />)}
+        <CardDeckSkeleton />)} */}
+      <CardDeck
+        action={action}
+        setAction={setAction}
+        setIsSwiping={setIsSwiping}
+        handleAction={handleAction}
+      />
       <CardActionButtons
         isSwiping={isSwiping}
         setAction={setAction}

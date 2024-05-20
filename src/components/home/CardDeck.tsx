@@ -1,28 +1,25 @@
 import Card from "@/components/home/Card";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSprings, animated, to as interpolate } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
+import { Dish, asyncUpdateDishes, selectRecommendedDishes, selectStatus } from "@/lib/redux/features/dishes/dishesSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
+import CardDeckSkeleton from "@/components/home/CardDeckSkeleton";
 const ACTIONS_TYPE = {
   LIKE: 'like',
   DISLIKE: 'dislike',
   SKIP: 'skip',
   NONE: 'none'
 }
-interface Card {
-  image: string;
-  name: string;
-  address: string;
-  price: string;
-  categories: string[];
-  description: string;
-}
+const UPDATE_DECK_WHEN = 1;
+const FETCH_API_WHEN = 20;
+
 interface CardDeckProps {
-  cards: Card[];//list of cards to show in deck, the last card is on top
   action: string;//handle action button click
   setAction: React.Dispatch<React.SetStateAction<string>>;//set action button when done swipe
   setIsSwiping: React.Dispatch<React.SetStateAction<string>>;//set isSwiping when swipe
-  handleAction: (action: string) => void;//do action when swipe done
+  handleAction: (action: string, dish: Dish) => void;//do action when swipe done
 }
 // These two are just helpers, they curate spring data, values that are later being interpolated into css
 const to = (i: number) => ({
@@ -30,22 +27,32 @@ const to = (i: number) => ({
   y: 0,
   scale: 1,
   rot: 0,
-  delay: 100,
+  delay: 0,
 });
 const from = (_i: number) => ({ x: 0, rot: 0, scale: 1, y: 0 });
 // This is being used down there in the view, it interpolates rotation and scale into a css transform
 const trans = (r: number, s: number) =>
-  `perspective(1500px) rotateX(0deg) rotateY(${
-    r / 10
-  }deg) rotateZ(${r}deg) scale(${s})`;
+  `perspective(1500px) rotateX(0deg) rotateY(0deg) rotateZ(${r}deg) scale(${s})`;
 
-const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwiping, handleAction}) => {
+const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, handleAction }) => {
+  const cardStore = useAppSelector(selectRecommendedDishes);
+  const isFetching = useAppSelector(selectStatus) === "loading";
+  const dispatch = useAppDispatch();
+  const [cards, setCards] = useState<Dish[]>([]);
+  useEffect(() => {
+    if (cards.length < 1 && cardStore.length > 1) {
+      setCards(cardStore);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cardStore, cards.length]);
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
   const [readyGone, setReadyGone] = useState(0);
   const [props, api] = useSprings(cards.length, (i) => ({
     ...to(i),
     from: from(i),
-  })); // Create a bunch of springs using the helpers above
+    immediate: true,
+  }
+  ), [cards]); // Create a bunch of springs using the helpers above
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
   const bind = useDrag(
     ({
@@ -61,12 +68,12 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
         gone.add(index);
       }
       const curXDir = readyGone !== 0 ? readyGone : xDir;
-      if (gone.has(index)){
-        if(curXDir === 1){
-          handleAction(ACTIONS_TYPE.LIKE);
+      if (gone.has(index)) {
+        if (curXDir === 1) {
+          handleAction(ACTIONS_TYPE.LIKE, cards[index]);
         }
-        if(curXDir === -1){
-          handleAction(ACTIONS_TYPE.SKIP);
+        if (curXDir === -1) {
+          handleAction(ACTIONS_TYPE.SKIP, cards[index]);
         }
         setReadyGone(0);
       }
@@ -88,8 +95,6 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
         if ((x < 100 && x > -100 && !active) || isGone) {
           setIsSwiping(ACTIONS_TYPE.NONE);
         }
-  
-
         return {
           x,
           rot,
@@ -98,107 +103,118 @@ const CardDeck: React.FC<CardDeckProps> = ({ cards, action, setAction,setIsSwipi
           config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 },
         };
       });
-      if (!active && gone.size === cards.length) handleAllGone();
+      if (!active && (gone.size + UPDATE_DECK_WHEN) === cards.length) handleFewCard();
     }
   );
-  const handleAllGone = () => {
-    //TODO: fetch new cards when only 10 cards left
-    setTimeout(() => {
-      gone.clear();
-      api.start((i) => to(i));
-    }, 600);
+  const handleFewCard = () => {
+    const newCards = cardStore.slice(0, cardStore.length - 1 - UPDATE_DECK_WHEN);
+    setCards(newCards);
+    gone.clear();
   };
   //this is for action button click
-  if (action === ACTIONS_TYPE.LIKE) {
-    //swipe right when action button is clicked
-    const curIndex = cards.length - 1 - gone.size;
-    gone.add(curIndex);
-    handleAction(ACTIONS_TYPE.LIKE);
-    api.start((i) => {
-      if (curIndex !== i) return;
-      const isGone = gone.has(curIndex);
-      const x = isGone ? (200 + window.innerWidth) * 1 : 0;
-      const rot = 0 / 100 + (isGone ? 1 * 10 * 1 : 0);
-      const scale = 1;
-      return {
-        x,
-        rot,
-        scale,
-        delay: undefined,
-        config: { friction: 50, tension: 800 },
-      };
-    });
-    if (gone.size === cards.length) handleAllGone();
-    setAction(ACTIONS_TYPE.NONE);
+  useEffect(() => {
+    if (action === ACTIONS_TYPE.LIKE) {
+      //swipe right when action button is clicked
+      const curIndex = cards.length - 1 - gone.size;
+      gone.add(curIndex);
+      api.start((i) => {
+        if (curIndex !== i) return;
+        const isGone = gone.has(curIndex);
+        const x = isGone ? (200 + window.innerWidth) * 1 : 0;
+        const rot = 0 / 100 + (isGone ? 1 * 10 * 1 : 0);
+        const scale = 1;
+        return {
+          x,
+          rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: 800 },
+        };
+      });
+      if ((gone.size + UPDATE_DECK_WHEN) === cards.length) handleFewCard();
+      handleAction(ACTIONS_TYPE.LIKE, cards[curIndex]);
+      setAction(ACTIONS_TYPE.NONE);
+    }
+    if (action === ACTIONS_TYPE.SKIP) {
+      //swipe left when action button is clicked
+      const curIndex = cards.length - 1 - gone.size;
+      gone.add(curIndex);
+      api.start((i) => {
+        if (curIndex !== i) return;
+        const isGone = gone.has(curIndex);
+        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
+        const scale = 1;
+        return {
+          x,
+          rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: 800 },
+        };
+      });
+      handleAction(ACTIONS_TYPE.SKIP, cards[curIndex]);
+      setAction(ACTIONS_TYPE.NONE);
+      if ((gone.size + UPDATE_DECK_WHEN) === cards.length) handleFewCard();
+    }
+    if (action === ACTIONS_TYPE.DISLIKE) {
+      //swipe left when action button is clicked
+      const curIndex = cards.length - 1 - gone.size;
+      gone.add(curIndex);
+      api.start((i) => {
+        if (curIndex !== i) return;
+        const isGone = gone.has(curIndex);
+        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
+        const scale = 1;
+        return {
+          x,
+          rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: 800 },
+        };
+      });
+      if ((gone.size + UPDATE_DECK_WHEN) === cards.length) handleFewCard();
+      handleAction(ACTIONS_TYPE.DISLIKE, cards[curIndex]);
+      setAction(ACTIONS_TYPE.NONE);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [action]);
+  if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token")
+      token && dispatch(asyncUpdateDishes(token));
+    }
   }
-  if (action === ACTIONS_TYPE.SKIP) {
-    //swipe left when action button is clicked
-    const curIndex = cards.length - 1 - gone.size;
-    gone.add(curIndex);
-    handleAction(ACTIONS_TYPE.SKIP);
-    api.start((i) => {
-      if (curIndex !== i) return;
-      const isGone = gone.has(curIndex);
-      const x = isGone ? (200 + window.innerWidth) * -1 : 0;
-      const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
-      const scale = 1;
-      return {
-        x,
-        rot,
-        scale,
-        delay: undefined,
-        config: { friction: 50, tension: 800 },
-      };
-    });
-    if (gone.size === cards.length) handleAllGone();
-    setAction(ACTIONS_TYPE.NONE);
-  }
-  if (action === ACTIONS_TYPE.DISLIKE) {
-    //swipe left when action button is clicked
-    const curIndex = cards.length - 1 - gone.size;
-    gone.add(curIndex);
-    handleAction(ACTIONS_TYPE.DISLIKE);
-    api.start((i) => {
-      if (curIndex !== i) return;
-      const isGone = gone.has(curIndex);
-      const x = isGone ? (200 + window.innerWidth) * -1 : 0;
-      const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
-      const scale = 1;
-      return {
-        x,
-        rot,
-        scale,
-        delay: undefined,
-        config: { friction: 50, tension: 800 },
-      };
-    });
-    if (gone.size === cards.length) handleAllGone();
-    setAction(ACTIONS_TYPE.NONE);
-  }
-
-  return (
-    <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto overflow-hidden touch-none">
-      {props.map(({ x, y, rot, scale }, index) => (
-        <animated.div
-          key={index}
-          className="absolute w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
-          style={{
-            x,
-            y,
-          }}
-        >
+  const isPrepareData = cardStore.length == 0;
+  return (<>
+    {!isPrepareData ? (
+      <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto touch-none">
+        {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
-            {...bind(index)}
-            className="h-full w-full touch-none will-change-transform"
+            key={index}
+            className="absolute w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
             style={{
-              transform: interpolate([rot, scale], trans),
+              x,
+              y,
             }}
           >
-            <Card {...cards[index]} />
+            <animated.div
+              {...bind(index)}
+              className="h-full w-full touch-none will-change-transform"
+              style={{
+                transform: interpolate([rot, scale], trans),
+              }}
+            >
+              {cards[index] && <Card {...cards[index]} />}
+            </animated.div>
           </animated.div>
-        </animated.div>
-      ))}
-    </div>
+        ))}
+      </div>) : (
+      <CardDeckSkeleton />
+    )
+    }</>
   );
 };
 

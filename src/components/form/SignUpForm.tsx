@@ -16,6 +16,7 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
 import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 const FormSchema = z
   .object({
@@ -39,6 +40,8 @@ const FormSchema = z
   });
 
 const SignUpForm = () => {
+  const [buttonClicked, setButtonClicked] = useState(false);
+
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -52,6 +55,7 @@ const SignUpForm = () => {
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     // console.log(values);
+
     const response = await fetch('/api/auth', {
     method: 'POST',
     headers : {
@@ -66,8 +70,10 @@ const SignUpForm = () => {
       })
     })
 
+    setButtonClicked(true);
     if(response.ok) {
       router.push('/onboarding')
+      localStorage.setItem("token", (await response.json()).token);
       // localStorage.setItem('itemName', value)
       // localStorage.getItem('itemName')
     } else {
@@ -76,8 +82,12 @@ const SignUpForm = () => {
   };
   
   return (
+    <div>
+    <div className="header p-3 top-3">
+      <p className="flex flex-wrap text-4xl font-semibold"> Đăng kí tài khoản</p>
+    </div>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='items-center'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
         <div className='w-11/12 mx-4 space-y-2 justify-center'>
           <FormField
             control={form.control}
@@ -140,7 +150,7 @@ const SignUpForm = () => {
             )}
           />
         </div>
-        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 bg-green-600 border-2 border-green-600' type='submit'>
+        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center text-white mt-6 bg-green-600 border-2 border-green-600' type='submit' disabled={buttonClicked}>
           Đăng kí
         </Button>
       </form>
@@ -148,13 +158,14 @@ const SignUpForm = () => {
         or
       </div> */}
       {/* <GoogleSignInButton>Sign up with Google</GoogleSignInButton> */}
-      <p className='text-center text-sm text-white mt-2'>
+      <p className='text-center text-sm text-black mt-2'>
         Nếu bạn đã có tài khoản, hãy&nbsp;
         <Link className='text-blue-500 hover:underline' href='/signin'>
           đăng nhập tại đây
         </Link>
       </p>
     </Form>
+    </div>
   );
 };
 

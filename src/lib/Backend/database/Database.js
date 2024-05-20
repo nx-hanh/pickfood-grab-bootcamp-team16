@@ -30,9 +30,10 @@ async function addData(data) {
     }
 }
 
-async function findData(model, query, limit = null) {
+async function findData(model, query, limit = null, skip = null) {
     let queryData = model.find(query);
     if (limit) queryData = queryData.limit(limit);
+    if (skip) queryData = queryData.skip(skip);
     try {
         let result = await queryData;
         if (result.length == 0) return null;
@@ -56,4 +57,20 @@ async function findAndUpdate(model, query, update) {
     }
 }
 
-module.exports = { connect, addData, findData, findAndUpdate }
+async function aggregateData(model, pipeline) {
+    try {
+        const result = await model.aggregate(pipeline);
+        if (result.length === 0) return null;
+        return result;
+    } catch (error) {
+        console.error('Error aggregating data in MongoDB:', error);
+        return null;
+    }
+}
+
+async function createView(viewName, viewDef, pipeline) {
+    await mongoose.connection.db.createView(viewName, viewDef, pipeline);
+}
+
+
+module.exports = { connect, addData, findData, findAndUpdate, aggregateData }

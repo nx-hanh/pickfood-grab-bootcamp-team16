@@ -8,8 +8,11 @@
 
 # testing
 /coverage
-test.js
-test.py
+test*.*
+explain.json
+merchant_id.txt
+restaurant_id.json
+getCategoryIdOfMerchant.py
 
 # next.js
 /.next/

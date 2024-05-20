@@ -3,16 +3,23 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Croissant } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
+import { Roboto as FontSans } from "next/font/google";
+import Header from "@/components/common/header";
 interface FoodItem {
   id: number;
   name: string;
 }
 
+const fontSans = FontSans({ 
+  subsets: ["vietnamese"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+ });
+
 const Onboarding: React.FC = () => {
   const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[]>([]);
   // const [categories, setCategories] = useState<FoodItem[]>([]);
   const [foodList, setFoodList] = useState<FoodItem[] | any>([]);
+  const [buttonClicked, setButtonClicked] = useState(false);
   const router = useRouter();
   // Add favorite
   const addFavorite = async () => {
@@ -20,8 +27,8 @@ const Onboarding: React.FC = () => {
       method: 'POST',
       headers : {
         'Content-Type' : 'application/json',
-        // Authorization : localStorage.getItem("token")
-        Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
+        Authorization : localStorage.getItem("token") || "",
+        // Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
       },
       body: JSON.stringify({
         favorites: selectedFoodItems.map(food => food.id)
@@ -44,6 +51,10 @@ const Onboarding: React.FC = () => {
     );
   };
 
+  const handleClick = () => {
+    addFavorite()
+    setButtonClicked(true);
+  };
   // GET api/getcategories (lấy các category từ server, format [category_id, category_name], protected api)
 
   const getCategories = async () => {
@@ -83,17 +94,20 @@ const Onboarding: React.FC = () => {
 
   return (
     <div> 
-      <div className="header">
-          <h1 className="flex justify-center flex-wrap text-xl">Chọn những món bạn thích</h1>
+      
+      <div className="header p-3 top-3">
+          <h1 className="flex justify-stretch flex-wrap text-4xl font-bold">
+            Lựa chọn những món ăn bạn yêu thích 🥳</h1>
+          <h3 className="pt-3 text-2xl font-normal">Bạn chọn món, tôi làm hết 🎉🎉🎉</h3>
       </div>
-      <div className='flex flex-wrap justify-stretch'>
+      <div className='flex flex-wrap justify-stretch px-2'>
       
       {foodList.map((food: FoodItem, index) => (
         <Button 
           variant ={`${selectedFoodItems.includes(food)? 'default' : 'outline'}`}
           // variant = 'outline'
           key={index}
-          className={`mt-1 mr-1 ml-1 text-white ${selectedFoodItems.includes(food)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
+          className={`m-1 text-white ${selectedFoodItems.includes(food)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
           type="submit"
           onClick={() => handleFoodSelect(food)}
         >
@@ -106,7 +120,7 @@ const Onboarding: React.FC = () => {
 
       </div>
       <div className="footer">
-        <Button className='absolute bottom-3 left-3 right-3 text-white bg-green-600 justify-center' onClick={addFavorite} type='submit'>
+        <Button size='lg' className='absolute bottom-3 left-3 right-3 text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
           Tiếp tục
         </Button>
         </div>
