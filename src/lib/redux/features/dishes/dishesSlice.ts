@@ -29,7 +29,7 @@ export interface DishesState {
   dishes: Dish[];
   recommendedDishes: Dish[];
   likedDishes: LikedDish[];
-  status: "idle" | "loading" | "failed";
+  status: "idle" | "loading" | "failed" | "nomore"
   isFetchLikedDishes: "init" | "idle" | "loading" | "failed";
 }
 
@@ -99,6 +99,10 @@ export const dishesSlice = createAppSlice({
         },
         fulfilled: (state, action) => {
           state.status = "idle";
+          if (action.payload.length === 0) {
+            state.status = "nomore";
+            return;
+          }
           const newDishes = action.payload.map((dish: any) => {
             return {
               id: dish.id,
@@ -137,7 +141,7 @@ export const dishesSlice = createAppSlice({
           state.isFetchLikedDishes = "loading";
         },
         fulfilled: (state, action) => {
-          const likedDishes = action.payload.reducer(
+          const likedDishes = action.payload.reduce(
             (acc: LikedDish[], dish: any) => {
               const date = new Date(dish.timeStamp);
               const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;

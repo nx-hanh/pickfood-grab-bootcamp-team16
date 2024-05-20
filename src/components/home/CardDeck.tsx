@@ -183,8 +183,8 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
-  if (cardStore.length <= FETCH_API_WHEN && storeStatus !== "loading") {
-    navigator.geolocation.getCurrentPosition((position) => {
+  if (cardStore.length <= FETCH_API_WHEN && storeStatus !== "loading" && storeStatus !== "nomore") {
+    navigator?.geolocation.getCurrentPosition((position) => {
       if (typeof window !== "undefined") {
         const token = localStorage.getItem("token")
         const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
@@ -197,8 +197,8 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     })
   }
   const isPrepareData = cardStore.length !== 0;
-  useEffect(()=>{
-    if(storeStatus === "failed" && !isPrepareData){
+  useEffect(() => {
+    if (storeStatus === "failed" && !isPrepareData) {
       throw Error();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -227,8 +227,10 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
           </animated.div>
         ))}
       </div>) : (
-      <CardDeckSkeleton />
-    )
+      storeStatus === "loading" ? <CardDeckSkeleton /> : <div className="h-full w-full flex flex-col items-center justify-center">
+        <p className="font-semibold">Hiện tại không tìm thấy thêm món ăn phù hợp!</p>
+        <p>Hãy quay lại sau!</p>
+      </div>)
     }</>
   );
 };
