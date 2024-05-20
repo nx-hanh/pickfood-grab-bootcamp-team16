@@ -10,23 +10,27 @@ export interface Dish {
   categories: string[];
   category_id: number[];
   address: string;
+  distance: number;
 }
 export const isDish = (obj: any): obj is Dish => {
   return (
-    obj && typeof obj === "object" && 
-    "id" in obj && typeof obj.id === "string" &&
-    "category_id" in obj && typeof obj.category_id === "string"
+    obj &&
+    typeof obj === "object" &&
+    "id" in obj &&
+    typeof obj.id === "string" &&
+    "category_id" in obj
   );
-}
+};
 export interface LikedDish {
-  dish: Dish;
-  likedAt: string;
+  dishes: Dish[];
+  date: string;
 }
 export interface DishesState {
   dishes: Dish[];
   recommendedDishes: Dish[];
   likedDishes: LikedDish[];
-  status: "idle" | "loading" | "failed";
+  status: "idle" | "loading" | "failed" | "nomore";
+  isFetchLikedDishes: "init" | "idle" | "loading" | "failed";
 }
 
 const initialState: DishesState = {
@@ -34,6 +38,7 @@ const initialState: DishesState = {
   recommendedDishes: [],
   likedDishes: [],
   status: "idle",
+  isFetchLikedDishes: "init",
 };
 
 export const dishesSlice = createAppSlice({
@@ -47,10 +52,21 @@ export const dishesSlice = createAppSlice({
     dishLiked: create.reducer((state, action: PayloadAction<Dish>) => {
       const date = new Date();
       const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-      state.likedDishes.push({ dish: action.payload, likedAt: likeDate });
+      const likedDish = state.likedDishes.find(
+        (dish) => dish.date === likeDate
+      );
+      if (likedDish) {
+        likedDish.dishes.push(action.payload);
+      } else {
+        state.likedDishes.push({
+          date: likeDate,
+          dishes: [action.payload],
+        });
+      }
       state.recommendedDishes = state.recommendedDishes.filter(
         (dish) => dish.id !== action.payload.id
       );
+      state.isFetchLikedDishes = "idle";
     }),
     removeDish: create.reducer((state, action: PayloadAction<Dish>) => {
       state.recommendedDishes = state.recommendedDishes.filter(
@@ -58,8 +74,20 @@ export const dishesSlice = createAppSlice({
       );
     }),
     asyncUpdateDishes: create.asyncThunk(
-      async (token: string) => {
-        const response = await fetch("/api/getdishes", {
+      async ({
+        lat,
+        long,
+        token,
+      }: {
+        lat: number;
+        long: number;
+        token: string;
+      }) => {
+        const locationAcceptable = lat !== -1 && long !== -1;
+        const url = locationAcceptable
+          ? `/api/getdishes?lat=${lat}&long=${long}`
+          : `/api/getdishes`;
+        const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -74,6 +102,10 @@ export const dishesSlice = createAppSlice({
         },
         fulfilled: (state, action) => {
           state.status = "idle";
+          if (action.payload.length === 0) {
+            state.status = "nomore";
+            return;
+          }
           const newDishes = action.payload.map((dish: any) => {
             return {
               id: dish.id,
@@ -84,6 +116,7 @@ export const dishesSlice = createAppSlice({
               categories: dish.category,
               category_id: dish.category_id,
               address: dish.address,
+              distance: dish.distance,
             };
           });
           state.dishes = newDishes;
@@ -94,12 +127,80 @@ export const dishesSlice = createAppSlice({
         },
       }
     ),
+    asyncFetchLikedDishes: create.asyncThunk(
+      async (token: string) => {
+        const url = `/api/getfoodloved`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        });
+        return response.json().then((data) => data);
+      },
+      {
+        pending: (state) => {
+          state.isFetchLikedDishes = "loading";
+        },
+        fulfilled: (state, action) => {
+          const likedDishes = action.payload.reduce(
+            (acc: LikedDish[], dish: any) => {
+              const date = new Date(dish.timeStamp);
+              const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+              const likedDish = acc.find((d) => d.date === likeDate);
+              if (likedDish) {
+                likedDish.dishes.push({
+                  id: dish.id,
+                  name: dish.name,
+                  description: dish.description,
+                  price: dish.price,
+                  image: dish.imgLink,
+                  categories: dish.category,
+                  category_id: dish.category_id,
+                  address: dish.address,
+                  distance: dish.distance,
+                });
+              } else {
+                acc.push({
+                  date: likeDate,
+                  dishes: [
+                    {
+                      id: dish.id,
+                      name: dish.name,
+                      description: dish.description,
+                      price: dish.price,
+                      image: dish.imgLink,
+                      categories: dish.category,
+                      category_id: dish.category_id,
+                      address: dish.address,
+                      distance: dish.distance,
+                    },
+                  ],
+                });
+              }
+              return acc;
+            },
+            []
+          );
+          state.likedDishes = likedDishes;
+          state.isFetchLikedDishes = "idle";
+        },
+        rejected: (state) => {
+          state.isFetchLikedDishes = "failed";
+        },
+      }
+    ),
   }),
   selectors: {
     selectDishes: (dishes) => dishes.dishes,
-    selectRecommendedDishes: createSelector([dishes => dishes.recommendedDishes], (recommendedDishes) => recommendedDishes.slice().reverse()),
+    selectRecommendedDishes: createSelector(
+      [(dishes) => dishes.recommendedDishes],
+      (recommendedDishes) => recommendedDishes.slice().reverse()
+    ),
     selectLikedDishes: (dishes) => dishes.likedDishes,
     selectStatus: (dishes) => dishes.status,
+    selectIsFetchLikedDishes: (dishes) => dishes.isFetchLikedDishes,
   },
 });
 
@@ -108,6 +209,7 @@ export const {
   dishLiked,
   removeDish,
   asyncUpdateDishes,
+  asyncFetchLikedDishes,
 } = dishesSlice.actions;
 
 export const {
@@ -115,4 +217,5 @@ export const {
   selectRecommendedDishes,
   selectLikedDishes,
   selectStatus,
+  selectIsFetchLikedDishes,
 } = dishesSlice.selectors;
