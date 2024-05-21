@@ -12,6 +12,10 @@ interface LikedDishCardProps {
 const LikedDishCard: FC<LikedDishCardProps> = ({ dish }) => {
   const [open, setOpen] = React.useState<boolean>(false);
   const priceInFormatted = new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(dish.price)
+  const handleAddressClick = () => {
+    const mapUrl = `https://www.google.com/maps/search/${dish.address}/?hl=vi-VN&entry=ttu`
+    window.open(mapUrl, '_blank');
+  }
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
@@ -36,8 +40,15 @@ const LikedDishCard: FC<LikedDishCardProps> = ({ dish }) => {
           <div className="p-4 pb-0 w-full flex flex-row justify-center items-center">
             <Image src={dish.image} alt={dish.name} width={100} height={100} className='m-1' />
             <div className="flex-1 h-[100px] flex flex-col items-start justify-start ml-2">
-              <span className="text-xs text-gray-500">Địa chỉ: {dish.address}</span>
-              <span className="text-xs text-gray-500">Giá: {priceInFormatted}</span>
+              <div className='px-2 w-full bg-[#f0eef0] rounded-[10px] cursor-pointer select-none
+                              active:translate-y-2  active:[box-shadow:0_0px_0_0_#bababa,0_0px_0_0_#afb9c9]
+                              active:border-b-[0px]
+                              transition-all duration-150 [box-shadow:0_5px_0_0_#bababa,0_10px_0_0_#afb9c9]
+                              border-b-[1px] border-gray-400 mb-4'
+                onClick={handleAddressClick}>
+                <span className='w-full flex flex-col justify-center items-center h-full text-center text-black font-semibold text-lg '>{dish.address}</span>
+              </div>
+              <span className="text-md text-black ml-2">Giá: {priceInFormatted}</span>
             </div>
           </div>
           <DrawerFooter className='w-full flex items-center justify-center'>

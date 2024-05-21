@@ -4,10 +4,13 @@ import React, { useState, useEffect } from 'react';
 import './SettingsPage.css'; // Import the CSS file for styling
 import { Button } from '@/components/ui/button';
 import { User, ShieldCheck, Bell, Lock, CalendarCheck, BadgeHelp, Boxes} from 'lucide-react'
+import { useAppDispatch } from '@/lib/hooks/redux';
+import { resetDishes } from '@/lib/redux/features/dishes/dishesSlice';
  
 
 const SettingsPage = () => {
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const navigateToEditProfile = () => {
         router.push("/editProfile");
       };
@@ -55,7 +58,7 @@ const SettingsPage = () => {
       const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("favorites");
-
+        dispatch(resetDishes());
         document.cookie.split(";").forEach(cookie => {
           const name = cookie.split("=")[0].trim();
           document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
