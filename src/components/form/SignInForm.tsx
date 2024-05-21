@@ -42,7 +42,6 @@ const SignInForm = () => {
   const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    // console.log(values);
     const response = await fetch('/api/auth', {
       method: 'POST',
       headers : {
@@ -61,9 +60,6 @@ const SignInForm = () => {
       } else {
         console.error('Registration failed')
       }
-  };
-
-  const handleClick = () => {
   };
 
   return (

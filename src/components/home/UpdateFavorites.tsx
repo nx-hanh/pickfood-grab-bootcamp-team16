@@ -8,20 +8,11 @@ interface FoodItem {
   name: string;
 }
 
-const Onboarding: React.FC = () => {
-  const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[]>([]);
+const UpdateFavorites: React.FC = () => {
+  const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[] | any>([]);
   const [foodList, setFoodList] = useState<FoodItem[] | any>([]);
   const [buttonClicked, setButtonClicked] = useState(false);
   const router = useRouter();
-  // Add favorite
-  useEffect(() => {
-    const data = localStorage.getItem('favorites');
-    if ( data !== null ) setSelectedFoodItems(JSON.parse(data));
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem('MY_APP_STATE', JSON.stringify(setSelectedFoodItems));
-  }, [setSelectedFoodItems]);
 
   const addFavorite = async () => {
     // const favorites = selectedFoodItems.map(food => food.id);
@@ -55,7 +46,6 @@ const Onboarding: React.FC = () => {
   };
 
   const handleClick = () => {
-
     addFavorite()
     setButtonClicked(true);
   };
@@ -78,16 +68,58 @@ const Onboarding: React.FC = () => {
       } else {
         console.error('Registration failed')
       };
+    
+
+  };  
+  // useEffect(() => {
+  // const currentFavorite = JSON.parse(localStorage.getItem("favorites"));
+  // setSelectedFoodItems(currentFavorite);
+  // }, []);
+
+  const getCurrentFavorite = async () => {
+    const response = await fetch('/api/getinitfavor', {
+      method: 'GET',
+      headers : {
+        'Content-Type' : 'application/json',
+        Authorization : localStorage.getItem("token") || "",
+      },
+      })
+
+      if(response.ok) {
+        const result = (await response.json());
+        // const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
+        // setFoodList(result);
+        console.log(result);
+        return result;
+      } else {
+        console.error('Registration failed')
+      };
   };  
 
+  // useEffect(() => {
+  //   getCategories()
+  //   .then((result) => {
+  //       setFoodList(result);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Registration failed')
+  //     });
+  // }, []);
+
   useEffect(() => {
-    getCategories()
-    .then((result) => {
-        setFoodList(result);
-      })
-      .catch((error) => {
-        console.error('Registration failed')
-      });
+    const fetchData = async () => {
+      try {
+        const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
+        console.log(categories);
+        console.log(favorites);
+        setFoodList(categories);
+        setSelectedFoodItems(favorites);
+      } catch (error) {
+        console.error('Fetching data failed', error);
+      }
+    };
+    
+    fetchData();
   }, []);
 
   return (
@@ -122,4 +154,4 @@ const Onboarding: React.FC = () => {
   );
 };
 
-export default Onboarding;
+export default UpdateFavorites;
