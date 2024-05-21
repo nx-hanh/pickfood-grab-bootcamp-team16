@@ -51,7 +51,9 @@ export const dishesSlice = createAppSlice({
     }),
     dishLiked: create.reducer((state, action: PayloadAction<Dish>) => {
       const date = new Date();
-      const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      const likeDate = `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()}`;
       const likedDish = state.likedDishes.find(
         (dish) => dish.date === likeDate
       );
@@ -66,7 +68,6 @@ export const dishesSlice = createAppSlice({
       state.recommendedDishes = state.recommendedDishes.filter(
         (dish) => dish.id !== action.payload.id
       );
-      state.isFetchLikedDishes = "idle";
     }),
     removeDish: create.reducer((state, action: PayloadAction<Dish>) => {
       state.recommendedDishes = state.recommendedDishes.filter(
@@ -144,46 +145,46 @@ export const dishesSlice = createAppSlice({
           state.isFetchLikedDishes = "loading";
         },
         fulfilled: (state, action) => {
-          const likedDishes = action.payload.reduce(
-            (acc: LikedDish[], dish: any) => {
-              const date = new Date(dish.timeStamp);
-              const likeDate = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-              const likedDish = acc.find((d) => d.date === likeDate);
-              if (likedDish) {
-                likedDish.dishes.push({
-                  id: dish.id,
-                  name: dish.name,
-                  description: dish.description,
-                  price: dish.price,
-                  image: dish.imgLink,
-                  categories: dish.category,
-                  category_id: dish.category_id,
-                  address: dish.address,
-                  distance: dish.distance,
-                });
-              } else {
-                acc.push({
-                  date: likeDate,
-                  dishes: [
-                    {
-                      id: dish.id,
-                      name: dish.name,
-                      description: dish.description,
-                      price: dish.price,
-                      image: dish.imgLink,
-                      categories: dish.category,
-                      category_id: dish.category_id,
-                      address: dish.address,
-                      distance: dish.distance,
-                    },
-                  ],
-                });
-              }
-              return acc;
-            },
-            []
-          );
-          state.likedDishes = likedDishes;
+          action.payload.forEach((element) => {
+            const date = new Date(element.timeStamp);
+            const likeDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
+            const likedDish = state.likedDishes.find(
+              (dish) => dish.date === likeDate
+            );
+            console.log(likedDish);
+            if (likedDish) {
+              likedDish.dishes.push({
+                id: element.id,
+                name: element.name,
+                description: element.description,
+                price: element.price,
+                image: element.imgLink,
+                categories: element.category,
+                category_id: element.category_id,
+                address: element.address,
+                distance: element.distance,
+              });
+            } else {
+              state.likedDishes.push({
+                date: likeDate,
+                dishes: [
+                  {
+                    id: element.id,
+                    name: element.name,
+                    description: element.description,
+                    price: element.price,
+                    image: element.imgLink,
+                    categories: element.category,
+                    category_id: element.category_id,
+                    address: element.address,
+                    distance: element.distance,
+                  },
+                ],
+              });
+            }
+          });
           state.isFetchLikedDishes = "idle";
         },
         rejected: (state) => {
