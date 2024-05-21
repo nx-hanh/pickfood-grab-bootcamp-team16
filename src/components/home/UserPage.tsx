@@ -83,7 +83,7 @@ const UserPage = () => {
         </div>
 
         <div className="flex py-4">
-          <Button className="profile-button text-white" onClick={handleClick} type='submit' disabled={buttonClicked}>Hồ sơ</Button>
+          <Button className="profile-button text-white" onClick={handleClick} type='submit' disabled={buttonClicked}>Cài đặt</Button>
           <Button className="profile-button text-white"onClick={changeFavorites} type='submit' disabled={buttonClicked}>Đổi món yêu thích </Button>
         </div>
       </div>
