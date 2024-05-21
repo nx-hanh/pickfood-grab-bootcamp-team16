@@ -6,6 +6,6 @@ export async function GET(request) {
     
     let decoded = JSON.parse(request.headers.get('decoded'));
     let lovedFood = await getFoodLoved(decoded.email);
-
+    
     return new Response(JSON.stringify(lovedFood), jsonHeader);
 }
