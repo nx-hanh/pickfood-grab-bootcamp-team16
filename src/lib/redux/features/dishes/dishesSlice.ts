@@ -45,6 +45,13 @@ export const dishesSlice = createAppSlice({
   name: "dishes",
   initialState,
   reducers: (create) => ({
+    resetDishes: create.reducer((state) => {
+      state.dishes = [];
+      state.recommendedDishes = [];
+      state.likedDishes = [];
+      state.status = "idle";
+      state.isFetchLikedDishes = "init";
+    }),
     addDishes: create.reducer((state, action: PayloadAction<Dish[]>) => {
       state.recommendedDishes = state.recommendedDishes.concat(action.payload);
       state.dishes = action.payload;
@@ -206,6 +213,7 @@ export const dishesSlice = createAppSlice({
 });
 
 export const {
+  resetDishes,
   addDishes,
   dishLiked,
   removeDish,
