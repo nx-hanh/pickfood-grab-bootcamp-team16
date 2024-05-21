@@ -5,6 +5,7 @@ import './SettingsPage.css'; // Import the CSS file for styling
 import { Button } from '@/components/ui/button';
 import { User, ShieldCheck, Bell, Lock, CalendarCheck, BadgeHelp, Boxes} from 'lucide-react'
  
+
 const SettingsPage = () => {
     const router = useRouter();
     const navigateToEditProfile = () => {
@@ -54,6 +55,14 @@ const SettingsPage = () => {
       const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("favorites");
+
+        document.cookie.split(";").forEach(cookie => {
+          const name = cookie.split("=")[0].trim();
+          document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+        });
+
+        router.push("/signin");
+
         router.push("/signin")
         console.log("Logout");
       };
