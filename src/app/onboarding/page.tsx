@@ -17,27 +17,27 @@ const fontSans = FontSans({
 
 const Onboarding: React.FC = () => {
   const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[]>([]);
-  // const [categories, setCategories] = useState<FoodItem[]>([]);
   const [foodList, setFoodList] = useState<FoodItem[] | any>([]);
   const [buttonClicked, setButtonClicked] = useState(false);
   const router = useRouter();
   // Add favorite
+  const favorites = selectedFoodItems.map(food => food.id);
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+
   const addFavorite = async () => {
     const response = await fetch('/api/addfavor', {
       method: 'POST',
       headers : {
         'Content-Type' : 'application/json',
         Authorization : localStorage.getItem("token") || "",
-        // Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
       },
       body: JSON.stringify({
-        favorites: selectedFoodItems.map(food => food.id)
+        favorites
+        // favorites: selectedFoodItems.map(food => food.id)
         })
       })
       if(response.ok) {
         router.push('/home')
-        // localStorage.setItem('itemName', value)
-        // localStorage.getItem('itemName')
       } else {
         console.error('Registration failed')
       }
@@ -58,13 +58,11 @@ const Onboarding: React.FC = () => {
   // GET api/getcategories (lấy các category từ server, format [category_id, category_name], protected api)
 
   const getCategories = async () => {
-    // console.log(values);
     const response = await fetch('/api/getcategories', {
       method: 'GET',
       headers : {
         'Content-Type' : 'application/json',
-        // Authorization : localStorage.getItem("token")
-        Authorization : "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..H4ZrKxqVxmU4W3jBBjzZ_A.K60SCzydwLW23W7KwoU7Tm6rIAfjs4mSFPiGTbuDNsiYekXcS0dfmOKhvcq6AKUZ.uK5yEtE5Ap-GJvdNvIqClw"
+        Authorization : localStorage.getItem("token") || "",
       },
       })
 
@@ -72,17 +70,13 @@ const Onboarding: React.FC = () => {
         const result = (await response.json());
         const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
         console.log(myList);
-        // console.log(myList);
-        // console.log(Array.isArray(result));
         return myList;
-        //router.push('/home')
       } else {
         console.error('Registration failed')
       };
   };  
 
   useEffect(() => {
-    // Using a Promise to simulate an asynchronous operation
     getCategories()
     .then((result) => {
         setFoodList(result);
@@ -94,18 +88,15 @@ const Onboarding: React.FC = () => {
 
   return (
     <div> 
-      
-      <div className="header p-3 top-3">
-          <h1 className="flex justify-stretch flex-wrap text-4xl font-bold">
+      <div className="header p-2 top-2">
+          <h1 className="flex justify-stretch flex-wrap text-3xl font-bold">
             Lựa chọn những món ăn bạn yêu thích 🥳</h1>
-          <h3 className="pt-3 text-2xl font-normal">Bạn chọn món, tôi làm hết 🎉🎉🎉</h3>
+          <h3 className="pt-2 text-2xl font-normal">Bạn chọn món, tôi làm hết 🎉🎉</h3>
       </div>
-      <div className='flex flex-wrap justify-stretch px-2'>
-      
+      <div className='flex flex-wrap justify-stretch px-1'>
       {foodList.map((food: FoodItem, index) => (
         <Button 
           variant ={`${selectedFoodItems.includes(food)? 'default' : 'outline'}`}
-          // variant = 'outline'
           key={index}
           className={`m-1 text-white ${selectedFoodItems.includes(food)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
           type="submit"

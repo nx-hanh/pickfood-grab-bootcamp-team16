@@ -3,15 +3,15 @@ module.exports = {
   important: true,
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages/**/*.tsx',
+    './components/**/*.tsx',
+    './app/**/*.tsx',
+    './src/**/*.tsx',
 	],
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      // padding: "2rem",
       screens: {
         "2xl": "1400px",
       },
