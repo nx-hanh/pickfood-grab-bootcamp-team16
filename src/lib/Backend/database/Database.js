@@ -26,7 +26,7 @@ async function addData(data) {
         return true;
     }
     catch (error) {
-        return false;
+        return error;
     }
 }
 
