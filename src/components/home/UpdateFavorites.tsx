@@ -68,8 +68,6 @@ const UpdateFavorites: React.FC = () => {
       } else {
         console.error('Registration failed')
       };
-    
-
   };  
   // useEffect(() => {
   // const currentFavorite = JSON.parse(localStorage.getItem("favorites"));
@@ -96,31 +94,31 @@ const UpdateFavorites: React.FC = () => {
       };
   };  
 
-  // useEffect(() => {
-  //   getCategories()
-  //   .then((result) => {
-  //       setFoodList(result);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Registration failed')
-  //     });
-  // }, []);
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
-        console.log(categories);
-        console.log(favorites);
-        setFoodList(categories);
-        setSelectedFoodItems(favorites);
-      } catch (error) {
-        console.error('Fetching data failed', error);
-      }
-    };
-    
-    fetchData();
+    getCategories()
+    .then((result) => {
+        setFoodList(result);
+      })
+      .catch((error) => {
+        console.error('Registration failed')
+      });
   }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
+  //       console.log(categories);
+  //       console.log(favorites);
+  //       setFoodList(categories);
+  //       setSelectedFoodItems(favorites);
+  //     } catch (error) {
+  //       console.error('Fetching data failed', error);
+  //     }
+  //   };
+    
+  //   fetchData();
+  // }, []);
 
   return (
     <div> 
