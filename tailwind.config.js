@@ -3,15 +3,15 @@ module.exports = {
   important: true,
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages/**/*.tsx',
+    './components/**/*.tsx',
+    './app/**/*.tsx',
+    './src/**/*.tsx',
 	],
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      // padding: "2rem",
       screens: {
         "2xl": "1400px",
       },
@@ -51,11 +51,6 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {

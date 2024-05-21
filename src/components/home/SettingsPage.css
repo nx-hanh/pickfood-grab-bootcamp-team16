@@ -1,0 +1,22 @@
+/* src/SettingsPage.css */
+
+.settings-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .settings-section {
+    margin-bottom: 20px;
+    align-items: left;
+  }
+  
+  .settings-section ul {
+    list-style-type: none;
+  }
+  
+  .settings-section li {
+    display: flex;
+    align-items: left;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }

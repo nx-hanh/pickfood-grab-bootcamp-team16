@@ -14,7 +14,7 @@ function generateSessionID() {
     return uuidv4();
 }
 
-async function useSessionData(sessionData, runRecommendation = true) {
+async function saveSessionData(sessionData, runRecommendation = true) {
     let updateUser_rating = sessionData.user_favorites.extractRating();
     let updateFavorites_result = await updateFavorites(sessionData.email, updateUser_rating);
     if (runRecommendation) {
@@ -53,7 +53,7 @@ function updateSession(sessionID, data) {
 async function deleteSession(sessionID) {
     clearTimeout(sessionTimeouts.get(sessionID)); // Clear existing timeout
     sessionTimeouts.delete(sessionID); // Remove from timeouts map
-    await useSessionData(sessions.get(sessionID).data, false); // Update user rating
+    await saveSessionData(sessions.get(sessionID).data, false); // Update user rating
     console.log(`Deleted session ${sessionID}`)
     return sessions.delete(sessionID); // Delete from sessions map
 }
@@ -70,4 +70,4 @@ function resetSessionTimeout(sessionID) {
     setSessionTimeout(sessionID, sessionExpirationTime); // Reset expiration time to 30 hour
 }
 
-module.exports = { createSession, getSession, updateSession, useSessionData };
+module.exports = { createSession, getSession, updateSession, saveSessionData };

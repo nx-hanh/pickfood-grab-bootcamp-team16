@@ -16,6 +16,3 @@ export default function Page() {
     <main></main>
   );
 }
-// export default function Home() {
-//   return <h1 className='text-4xl'>Home</h1>;
-// }

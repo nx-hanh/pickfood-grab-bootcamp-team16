@@ -1,13 +1,24 @@
-import React, { FC } from 'react'
+// import React, { FC } from 'react'
 
-interface pageProps {
+// interface pageProps {
   
-}
+// }
 
-const page: FC<pageProps> = ({}) => {
-  return <div>
-    User page
-  </div>
-}
+// const page: FC<pageProps> = ({}) => {
+//   return <div>
+//     User page
+//   </div>
+// }
 
-export default page
+import UserPage from '@/components/home/UserPage';
+
+const page = () => {
+  return (
+    <div className='w-full'>
+      <UserPage />
+    </div>
+  );
+};
+
+export default page;
+
