@@ -96,7 +96,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel>Tên tài khoản</FormLabel>
                 <FormControl>
-                  <Input placeholder='oogabooga' {...field} />
+                  <Input placeholder='test123' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -124,7 +124,7 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input
                     type='password'
-                    placeholder='use4Ginstead'
+                    placeholder=''
                     {...field}
                   />
                 </FormControl>
@@ -140,7 +140,7 @@ const SignUpForm = () => {
                 <FormLabel>Nhập lại mật khẩu</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder='Nhập lại mật khẩu'
+                    placeholder=''
                     type='password'
                     {...field}
                   />
@@ -154,10 +154,7 @@ const SignUpForm = () => {
           Đăng kí
         </Button>
       </form>
-      {/* {/* <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
-        or
-      </div> */}
-      {/* <GoogleSignInButton>Sign up with Google</GoogleSignInButton> */}
+
       <p className='text-center text-sm text-black mt-2'>
         Nếu bạn đã có tài khoản, hãy&nbsp;
         <Link className='text-blue-500 hover:underline' href='/signin'>
