@@ -45,6 +45,7 @@ async function getFoodLoved(email) {
     ];
     let lovedFood = await database.aggregateData(FavoriteDish, pipeline);
     let result = []
+    if (lovedFood == null) return result;
     for (let i = 0; i < lovedFood.length; i++) {
         result.push({
             id: lovedFood[i].dishID,

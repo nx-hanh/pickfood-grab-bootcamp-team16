@@ -137,3 +137,4 @@ const UpdateFavorites: React.FC = () => {
 };
 
 export default UpdateFavorites;
+export default UpdateFavorites;
