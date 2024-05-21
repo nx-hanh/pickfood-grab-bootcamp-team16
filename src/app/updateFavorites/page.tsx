@@ -21,24 +21,32 @@ const Onboarding: React.FC = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const router = useRouter();
   // Add favorite
+  useEffect(() => {
+    const data = localStorage.getItem('favorites');
+    if ( data !== null ) setSelectedFoodItems(JSON.parse(data));
+  }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem('MY_APP_STATE', JSON.stringify(setSelectedFoodItems));
+  }, [setSelectedFoodItems]);
 
   const addFavorite = async () => {
-    const favorites = selectedFoodItems.map(food => food.id);
+    // const favorites = selectedFoodItems.map(food => food.id);
+    // localStorage.setItem('favorites', JSON.stringify(favorites));
     const response = await fetch('/api/addfavor', {
       method: 'POST',
       headers : {
         'Content-Type' : 'application/json',
-        Authorization : localStorage.getItem("token") || "",Ư
-      },Ư
+        Authorization : localStorage.getItem("token") || "",
+      },
 
       body: JSON.stringify({
-        favorites
-        // favorites: selectedFoodItems.map(food => food.id)
+        favorites: selectedFoodItems.map(food => food.id)
         })
       })
       if(response.ok) {
-        localStorage.setItem('favorites', JSON.stringify( selectedFoodItems.map(food => food.id)));
+        const favorites = selectedFoodItems.map(food => food.id);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
         router.push('/home')
       } else {
         console.error('Registration failed')
@@ -54,6 +62,7 @@ const Onboarding: React.FC = () => {
   };
 
   const handleClick = () => {
+
     addFavorite()
     setButtonClicked(true);
   };
@@ -71,10 +80,7 @@ const Onboarding: React.FC = () => {
       if(response.ok) {
         const result = (await response.json());
         const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
-        const chosenList = localStorage.getItem('favorites');
-        
-        console.log(chosenList);
-        setSelectedFoodItems(chosenList);
+        console.log(myList);
         return myList;
       } else {
         console.error('Registration failed')

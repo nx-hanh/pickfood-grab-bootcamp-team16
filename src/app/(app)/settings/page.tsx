@@ -48,11 +48,12 @@ const SettingsPage = () => {
       };
     
       const addAccount = () => {
-        console.log("Aadd account ");
+        console.log("Add account ");
       };
     
       const logout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("favorites");
         router.push("/signin")
         console.log("Logout");
       };
