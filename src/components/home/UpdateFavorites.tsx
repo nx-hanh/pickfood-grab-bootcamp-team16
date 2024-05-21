@@ -18,9 +18,9 @@ const UpdateFavorites: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
+  
+
   const addFavorite = async () => {
-    // const favorites = selectedFoodItems.map(food => food.id);
-    // localStorage.setItem('favorites', JSON.stringify(favorites));
     const response = await fetch('/api/addfavor', {
       method: 'POST',
       headers : {
@@ -72,10 +72,6 @@ const UpdateFavorites: React.FC = () => {
         console.error('Registration failed')
       };
   };  
-  // useEffect(() => {
-  // const currentFavorite = JSON.parse(localStorage.getItem("favorites"));
-  // setSelectedFoodItems(currentFavorite);
-  // }, []);
 
   const getCurrentFavorite = async () => {
     const response = await fetch('/api/getinitfavor', {
@@ -88,10 +84,8 @@ const UpdateFavorites: React.FC = () => {
 
       if(response.ok) {
         const result = (await response.json());
-        // const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
         setSelectedFoodItems(result.initFood);
-        // console.log(result);
-        // return result;
+
       } else {
         console.error('Registration failed')
       };
@@ -102,7 +96,6 @@ const UpdateFavorites: React.FC = () => {
       try {
         const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
         setFoodList(categories);
-        // setSelectedFoodItems(favorites);
       } catch (error) {
         console.error('Fetching data failed', error);
       }
