@@ -3,16 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Croissant } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/lib/hooks/redux';
+import { resetDishes } from '@/lib/redux/features/dishes/dishesSlice';
+
 interface FoodItem {
   id: number;
   name: string;
 }
 
 const UpdateFavorites: React.FC = () => {
-  const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[] | any>([]);
+  const [selectedFoodItems, setSelectedFoodItems] = useState<FoodItem[]>([]);
   const [foodList, setFoodList] = useState<FoodItem[] | any>([]);
   const [buttonClicked, setButtonClicked] = useState(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const addFavorite = async () => {
     // const favorites = selectedFoodItems.map(food => food.id);
@@ -25,12 +29,10 @@ const UpdateFavorites: React.FC = () => {
       },
 
       body: JSON.stringify({
-        favorites: selectedFoodItems.map(food => food.id)
+        favorites: selectedFoodItems
         })
       })
       if(response.ok) {
-        const favorites = selectedFoodItems.map(food => food.id);
-        localStorage.setItem('favorites', JSON.stringify(favorites));
         router.push('/home')
       } else {
         console.error('Registration failed')
@@ -47,6 +49,7 @@ const UpdateFavorites: React.FC = () => {
 
   const handleClick = () => {
     addFavorite()
+    dispatch(resetDishes());
     setButtonClicked(true);
   };
   // GET api/getcategories (lấy các category từ server, format [category_id, category_name], protected api)
@@ -86,39 +89,27 @@ const UpdateFavorites: React.FC = () => {
       if(response.ok) {
         const result = (await response.json());
         // const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
-        // setFoodList(result);
-        console.log(result);
-        return result;
+        setSelectedFoodItems(result.initFood);
+        // console.log(result);
+        // return result;
       } else {
         console.error('Registration failed')
       };
   };  
 
   useEffect(() => {
-    getCategories()
-    .then((result) => {
-        setFoodList(result);
-      })
-      .catch((error) => {
-        console.error('Registration failed')
-      });
-  }, []);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
-  //       console.log(categories);
-  //       console.log(favorites);
-  //       setFoodList(categories);
-  //       setSelectedFoodItems(favorites);
-  //     } catch (error) {
-  //       console.error('Fetching data failed', error);
-  //     }
-  //   };
+    const fetchData = async () => {
+      try {
+        const [categories, favorites] = await Promise.all([getCategories(), getCurrentFavorite()]);
+        setFoodList(categories);
+        // setSelectedFoodItems(favorites);
+      } catch (error) {
+        console.error('Fetching data failed', error);
+      }
+    };
     
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
 
   return (
     <div> 
@@ -129,14 +120,14 @@ const UpdateFavorites: React.FC = () => {
       <div className='flex flex-wrap justify-stretch px-1'>
       {foodList.map((food: FoodItem, index) => (
         <Button 
-          variant ={`${selectedFoodItems.includes(food)? 'default' : 'outline'}`}
+          variant ={`${selectedFoodItems.includes(index)? 'default' : 'outline'}`}
           key={index}
-          className={`m-1 text-white ${selectedFoodItems.includes(food)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
+          className={`m-1 text-white ${selectedFoodItems.includes(index)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
           type="submit"
-          onClick={() => handleFoodSelect(food)}
+          onClick={() => handleFoodSelect(index)}
         >
           <div>
-            {selectedFoodItems.includes(food) ? <Heart className = 'mr-1'/> : <Croissant className = 'mr-1'/>}
+            {selectedFoodItems.includes(index) ? <Heart className = 'mr-1'/> : <Croissant className = 'mr-1'/>}
           </div>
           {food.name}
         </Button>

@@ -10,7 +10,6 @@ export default function Page() {
     const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
     if (!token || token === "") router.push("/welcome");
     else router.push("/home");
-    //eslint-disable-next-line
   }, []);
   return (
     <main></main>
