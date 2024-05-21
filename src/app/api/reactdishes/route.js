@@ -1,6 +1,7 @@
 const jsonHeader = require('@/lib/Backend/header/jsonHeader.js');
 const filterCategory = require('@/lib/Backend/database/filterCategory.js');
 const updateUserRating = require('@/lib/Backend/session/updateUserRating.js');
+const updateDishLoved = require('@/lib/Backend/database/updateDishLoved.js');
 const { cookies } = require("next/headers");
 
 export async function POST(request) {
@@ -19,9 +20,9 @@ export async function POST(request) {
     }
 
     let userData = await request.json();
+    if (userData.like) updateDishLoved(decoded.email, userData.dish_id);
     userData.categories = await filterCategory(userData.categories);
 
-    
     let updateStatus = await updateUserRating(sessionID, userData.categories, userData.like, decoded.email);
     if (!updateStatus) {
         status = {
@@ -30,7 +31,7 @@ export async function POST(request) {
         return new Response(JSON.stringify(status), jsonHeader);
     }
     status = {
-        "status": "Success"
+        "updateUserRating": "Success"
     }
     return new Response(JSON.stringify(status), jsonHeader);
 }

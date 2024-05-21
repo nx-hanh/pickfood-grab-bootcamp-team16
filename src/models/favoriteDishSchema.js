@@ -1,6 +1,7 @@
 // 'use server';
 
 const mongoose = require('mongoose');
+const { create } = require('./userSchema');
 
 const FavoriteDishSchema = new mongoose.Schema({
     userEmail: {
@@ -10,7 +11,11 @@ const FavoriteDishSchema = new mongoose.Schema({
     dishID: {
         type: String,
         required: true
+    },
+    createAt: {
+        type: Date,
+        default: Date.now
     }
-}, { timestamps: true });
+});
 
 module.exports = mongoose.models.FavoriteDish || mongoose.model('FavoriteDish', FavoriteDishSchema);
