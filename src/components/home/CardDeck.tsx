@@ -14,6 +14,7 @@ const ACTIONS_TYPE = {
 }
 const UPDATE_DECK_WHEN = 1;
 const FETCH_API_WHEN = 20;
+const NUMBER_RECOMMENDED = 20;
 
 interface CardDeckProps {
   action: string;//handle action button click
@@ -36,12 +37,13 @@ const trans = (r: number, s: number) =>
 
 const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, handleAction }) => {
   const cardStore = useAppSelector(selectRecommendedDishes);
-  const isFetching = useAppSelector(selectStatus) === "loading";
+  const storeStatus = useAppSelector(selectStatus);
+
   const dispatch = useAppDispatch();
   const [cards, setCards] = useState<Dish[]>([]);
   useEffect(() => {
     if (cards.length < 1 && cardStore.length > 1) {
-      setCards(cardStore);
+      setCards(cardStore.slice(-NUMBER_RECOMMENDED));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardStore, cards.length]);
@@ -92,8 +94,9 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
           setReadyGone(-1);
         }
         //when card is not swipe enough or not active, reset isSwiping
-        if ((x < 100 && x > -100 && !active) || isGone) {
+        if (mx < 100 && mx > -100 || isGone) {
           setIsSwiping(ACTIONS_TYPE.NONE);
+          setReadyGone(0);
         }
         return {
           x,
@@ -107,8 +110,8 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
   );
   const handleFewCard = () => {
-    const newCards = cardStore.slice(0, cardStore.length - 1 - UPDATE_DECK_WHEN);
-    setCards(newCards);
+    const newCards = cardStore.slice(0, cardStore.length - 1);
+    setCards(newCards.slice(-NUMBER_RECOMMENDED))
     gone.clear();
   };
   //this is for action button click
@@ -120,7 +123,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * 1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * 1 : 0;
         const rot = 0 / 100 + (isGone ? 1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -142,7 +145,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * -1 : 0;
         const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -164,7 +167,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
       api.start((i) => {
         if (curIndex !== i) return;
         const isGone = gone.has(curIndex);
-        const x = isGone ? (200 + window.innerWidth) * -1 : 0;
+        const x = isGone ? (400 + window.innerWidth) * -1 : 0;
         const rot = 0 / 100 + (isGone ? -1 * 10 * 1 : 0);
         const scale = 1;
         return {
@@ -181,16 +184,58 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [action]);
-  if (cardStore.length <= FETCH_API_WHEN && !isFetching) {
+
+  if (cardStore.length <= FETCH_API_WHEN && storeStatus !== "loading" && storeStatus !== "nomore") {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token")
-      token && dispatch(asyncUpdateDishes(token));
+      const fetchNoLocation = () => {
+        const token = localStorage.getItem("token")
+        const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+        if (isTokenExist) dispatch(asyncUpdateDishes({
+          lat: -1,
+          long: -1,
+          token: token
+        }));
+      }
+      const fetchLocation = (lat: number, long: number) => {
+        const token = localStorage.getItem("token")
+        const isTokenExist = token && token !== "undefined" && token !== "" && token !== "null";
+        if (isTokenExist) dispatch(asyncUpdateDishes({
+          lat: lat,
+          long: long,
+          token: token
+        }));
+      }
+      if (navigator.geolocation) {
+        navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
+          if (permissionStatus.state === 'prompt') {
+            navigator.geolocation.getCurrentPosition((position) => {
+              fetchLocation(position.coords.latitude, position.coords.longitude);
+            }, () => {
+              fetchNoLocation();
+            })
+          }
+          else if (permissionStatus.state === 'denied') {
+            fetchNoLocation();
+          }
+          else {
+            navigator.geolocation.getCurrentPosition((position) => {
+              fetchLocation(position.coords.latitude, position.coords.longitude);
+            })
+          }
+        });
+      }
     }
   }
-  const isPrepareData = cardStore.length == 0;
+  const isPrepareData = cardStore.length !== 0;
+  useEffect(() => {
+    if (storeStatus === "failed" && !isPrepareData) {
+      throw Error();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeStatus])
   return (<>
-    {!isPrepareData ? (
-      <div className="relative h-full w-full flex justify-center items-center max-w-screen-sm mx-auto touch-none">
+    {isPrepareData ? (
+      <div className="relative h-full w-screen flex justify-center items-center max-w-screen-sm mx-auto touch-none">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
             key={index}
@@ -212,8 +257,13 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
           </animated.div>
         ))}
       </div>) : (
-      <CardDeckSkeleton />
-    )
+      <>
+        {storeStatus === "loading" && <CardDeckSkeleton />}
+        {storeStatus === "nomore" && <div className="h-full w-full flex flex-col items-center justify-center">
+          <p className="font-semibold">Hiện tại không tìm thấy thêm món ăn phù hợp!</p>
+          <p>Hãy quay lại sau!</p>
+        </div>}
+      </>)
     }</>
   );
 };

@@ -25,50 +25,55 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
       : "bg-transparent";
   return (
     <>
-      <div className="absolute bottom-24 w-[200px] h-[75px] flex justify-between items-center">
-        <button
-          className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#f08c00] ${bgSkip}`}
-          onClick={(event) => {
-            event.preventDefault();
-            setAction(ACTIONS_TYPE.SKIP);
-          }}
-        >
-          <Image
-            src={"/card-action-skip.svg"}
-            alt="dislike"
-            width={50}
-            height={50}
-          />
-        </button>
-        <button
-          className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#2F9E44] ${bgLike}`}
-          onClick={(event) => {
-            event.preventDefault();
-            setAction(ACTIONS_TYPE.LIKE);
-          }}
-        >
-          <Image
-            src={"/card-action-like.svg"}
-            alt="like"
-            width={50}
-            height={50}
-          />
-        </button>
+      <div className="absolute bottom-24 w-[300px] h-[75px] flex justify-between items-center">
+        <div className="w-[125px] h-full flex flex-row justify-between items-end">
+          <button
+            className={`w-[45px] h-[45px] rounded-full `}
+            onClick={(event) => {
+              event.preventDefault();
+              setAction(ACTIONS_TYPE.DISLIKE);
+            }}
+          >
+            <Image
+              src={"/card-dislike-button-icon.svg"}
+              alt="dislike"
+              width={45}
+              height={45}
+            />
+          </button>
+          <button
+            className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#f08c00] ${bgSkip}`}
+            onClick={(event) => {
+              event.preventDefault();
+              setAction(ACTIONS_TYPE.SKIP);
+            }}
+          >
+            <Image
+              src={"/card-action-skip.svg"}
+              alt="dislike"
+              width={50}
+              height={50}
+            />
+          </button>
+        </div>
+        <div className="w-[125px] h-full flex flex-row justify-start items-end">
+          <button
+            className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#2F9E44] ${bgLike}`}
+            onClick={(event) => {
+              event.preventDefault();
+              setAction(ACTIONS_TYPE.LIKE);
+            }}
+          >
+            <Image
+              src={"/card-action-like.svg"}
+              alt="like"
+              width={50}
+              height={50}
+            />
+          </button>
+        </div>
       </div>
-      <button
-        className="absolute top-2 right-2 w-[30px] h-[30px] rounded-full flex items-center justify-center z-50"
-        onClick={(event) => {
-          event.preventDefault();
-          setAction(ACTIONS_TYPE.DISLIKE);
-        }}
-      >
-        <Image
-          src={"/card-dislike-button-icon.svg"}
-          alt="dislike"
-          width={30}
-          height={30}
-        />
-      </button>
+
     </>
   );
 };

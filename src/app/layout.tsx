@@ -1,10 +1,8 @@
-'use client'
 import type { Metadata } from "next";
 import { Roboto as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import Header from "@/components/common/header";
-import { useEffect } from "react";
 import StoreProvider from "@/components/StoreProvider";
 
 const fontSans = FontSans({
@@ -22,17 +20,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log("Latitude is :", position.coords.latitude);
-      console.log("Longitude is :", position.coords.longitude);
-    })
-  })
   return (
     <StoreProvider>
       <html lang="en">
         <body className={cn(
-          "relative h-svh flex flex-col justify-start items-center py-auto",
+          "relative h-svh max-h-svh flex flex-col justify-start items-center py-auto",
           fontSans.className
         )}>
           <Header />

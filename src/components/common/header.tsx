@@ -8,11 +8,16 @@ const Header = () => {
   const router = useRouter()
   return (
     <header className='w-full flex items-center justify-between px-4 py-2'>
-        <Image src='/logo.svg'
-          className='pl-1 cursor-pointer'
-          onClick={() => router.push('/')}
+      <Image src='/logo.svg'
+        className='pl-1 cursor-pointer'
+        onClick={() => router.push('/')}
         alt='logo' width={150} height={150} />
-        <DarkModeToggle />
+      <div className='flex'>
+        {
+          //navigation menu
+          // <DarkModeToggle />
+        }
+      </div>
     </header>
   )
 }

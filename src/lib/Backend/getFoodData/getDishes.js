@@ -1,88 +1,122 @@
 const database = require('@/lib/Backend/database/Database.js');
 const Dish = require('@/models/dishSchema.js');
+const Restaurant = require('@/models/restaurantsSchema.js');
 const limit_dishes = 50;
 const limit_dishes_category = limit_dishes / 5;
+// const getGridID = require('@/lib/Backend/utils/getGridID.js');
+// const calculateDistance = require('@/lib/Backend/utils/calculateDistance.js')
+const utils = require('@/lib/Backend/utils/utils.js');
+const categoryMerchant = global.categoryMerchant;
 
-async function getDishes(recommendationList, category_sent_list) {
-    let result = [];
+
+async function getRestaurantIDList(gridX, gridY) {
+    let query = {
+        gridX: { $gte: gridX - 1, $lte: gridX + 1 },
+        gridY: { $gte: gridY - 1, $lte: gridY + 1 }
+    }
+    let restaurantList = await Restaurant.find(query);
+    let restaurantIDList = [];
+    for (let i = 0; i < restaurantList.length; i++) {
+        restaurantIDList.push(restaurantList[i]._id);
+    }
+    return restaurantIDList;
+}
+
+function maxCategoryCanGet(merchant_id, category_id) {
+    if (categoryMerchant.has(merchant_id) && categoryMerchant.get(merchant_id).has(category_id)) {
+        return categoryMerchant.get(merchant_id).get(category_id);
+    }
+    return 0;
+}
+
+async function getDishes(recommendationList, category_sent_list, lat, long) {
+    let haveUserLocation = (lat != null && long != null);
     if (category_sent_list == null) {
         category_sent_list = {};
     }
-    let cnt = 0;
-    for (let i = 0; cnt < limit_dishes && i < recommendationList.length; i++) {
+    let gridID = utils.getGridID(lat, long);
+    let restaurantIDList;
+    if (!haveUserLocation) restaurantIDList = null;
+    else restaurantIDList = await getRestaurantIDList(gridID.gridX, gridID.gridY);
+    let numberOfDishes = 0;
+    let result = [];
+    let debug = false;
+    for (let i = 0; numberOfDishes < limit_dishes && i < recommendationList.length; i++) {
         let index = 0;
-        let recommendationCategory = recommendationList[i].id;
-        if (recommendationCategory in category_sent_list) {
-            index = category_sent_list[recommendationCategory];
+        if (recommendationList[i].id in category_sent_list) {
+            index = category_sent_list[recommendationList[i].id];
         }
-        let dishes;
-        let limit_query = Math.min(limit_dishes - cnt, limit_dishes_category);
-        // let query = {
-        //     category_id: recommendationCategory,
-        //     rank: { $gt: index , $lte: index + limit_query}
-        // }
-        // dishes = await database.findData(Dish, query, limit_query);
+        let restaurant_id_query;
+        if (restaurantIDList != null) {
+            restaurant_id_query = [];
+            for (let j = 0; j < restaurantIDList.length; j++) {
+                let maxCategory = maxCategoryCanGet(restaurantIDList[j].toString(), recommendationList[i].id);
+                if (index < maxCategory) {
+                    restaurant_id_query.push(restaurantIDList[j]);
+                }  
+            }
+            if (restaurant_id_query.length == 0) continue;
+        }
+        let limit = Math.min(limit_dishes_category, limit_dishes - numberOfDishes);
         let pipeline = [
-            {
-                $lookup: {
-                    from: 'restaurants',
-                    localField: 'merchant_id',
-                    foreignField: 'id',
-                    as: 'restaurants'
-                }
-            }, 
-            {
-                $match: {
-                    category_id: recommendationCategory,
-                    rank: { $gt: index, $lte: index + limit_query }
-                }
-            },
-            {
-                $project: {
-                    _id: 0, // Exclude the _id field
-                    id: 1,
-                    name: 1,
-                    imgLink: 1,
-                    price: 1,
-                    description: 1,
-                    category: 1,
-                    category_list_id: 1,
-                    rank: 1, // Include rank field
-                    restaurants: {
-                        $map: {
-                            input: "$restaurants",
-                            as: "restaurant",
-                            in: {
-                                address: "$$restaurant.address",
-                                // Include other fields you want from the 'restaurants' collection
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $limit: limit_query
+        {
+            $lookup: {
+                from: 'restaurants',
+                localField: 'merchant_id',
+                foreignField: '_id',
+                as: 'restaurant'
+            }
+        },
+        {
+            $match: {
+                category_id: recommendationList[i].id,
+            }
+        },
+        {
+            $skip: index
+        },
+        {
+            $limit: limit
+        },
+        {
+            $project: {
+                '_id': 0,
+                'id': 1,
+                'name': 1,
+                'imgLink': 1,
+                'price': 1,
+                'description': 1,
+                'category': 1,
+                'category_id': 1,
+                'category_list_id': 1,
+                'rank': 1,
+                'restaurant.location': 1,
+                'restaurant.address': 1,
+              }
             }
         ];
-        dishes = await database.aggregateData(Dish, pipeline);
+        if (haveUserLocation) pipeline[1]['$match']['merchant_id'] = {$in: restaurant_id_query};
+        let dishes = await database.aggregateData(Dish, pipeline);
         if (dishes == null) continue;
-        // console.log(dishes);
-        cnt += dishes.length;
-        for (let i = 0; i < dishes.length; i++) {
+        let distance = -1;
+        for (let j = 0; j < dishes.length; j++) {
+            let restaurantLocation = dishes[j].restaurant[0].location;
+            if (haveUserLocation) distance = utils.calculateDistance(lat, long, restaurantLocation[0], restaurantLocation[1]);
             result.push({
-                id: dishes[i].id,
-                name: dishes[i].name,
-                imgLink: dishes[i].imgLink,
-                price: dishes[i].price,
-                description: dishes[i].description,
-                category: dishes[i].category,
-                category_id: dishes[i].category_list_id,
-                address: dishes[i].restaurants[0].address,
-                distance: 0,
-                rank: dishes[i].rank
-            });
+                id: dishes[j].id,
+                name: dishes[j].name,
+                imgLink: dishes[j].imgLink,
+                price: dishes[j].price,
+                description: dishes[j].description,
+                category: dishes[j].category,
+                category_id: dishes[j].category_list_id,
+                // rank: dishes[j].rank,
+                address: dishes[j].restaurant[0].address,
+                distance: distance,
+            })
         }
-        category_sent_list[recommendationCategory] = index + dishes.length;
+        numberOfDishes += dishes.length;
+        category_sent_list[recommendationList[i].id] = index + dishes.length;
     }
     return [result, category_sent_list];
 }

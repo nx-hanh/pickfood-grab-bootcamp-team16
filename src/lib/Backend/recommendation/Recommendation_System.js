@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const maxCategories = Number(process.env.MAX_CATEGORY);
 const prefixFileName = `${process.cwd()}/src/lib/Backend/recommendation/`;
+const maxRating = 8;
 
 class RatingVector {
     constructor(categoriesId) {
@@ -32,6 +33,7 @@ class RatingVector {
 
     updateRating(categoryId, rating) {
         this.categoriesRating[categoryId] = Math.max(0, this.categoriesRating[categoryId] + rating);
+        this.categoriesRating[categoryId] = Math.min(maxRating, this.categoriesRating[categoryId]);
     }
 
     extractRating() {
