@@ -22,7 +22,7 @@ export default function Layout({
   }, []);
 
   return (
-    <div className="h-full flex flex-col w-full justify-start flex-1 overflow-hidden">
+    <div className="h-full flex flex-col w-full justify-start flex-1 overflow-hidden pb-14 sm:pb-20">
       {children}
       <div className="absolute bottom-0 left-0 w-full flex justify-center items-center">
         <AppMenu />

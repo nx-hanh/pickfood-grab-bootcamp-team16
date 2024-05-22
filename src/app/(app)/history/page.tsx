@@ -36,7 +36,7 @@ const Page: FC<pageProps> = ({ }) => {
     className='h-full w-full flex flex-col justify-start items-center max-w-xs mx-auto bg-[#F4F5F9]'
   >
     <h2 className='text-2xl font-bold mt-2 mb-4'>Nhật Ký Món Ngon</h2>
-    <div className='h-full max-h-full w-full overflow-y-scroll overflow-x-hidden no-scrollbar mb-20'>
+    <div className='h-full max-h-full w-full overflow-y-scroll overflow-x-hidden no-scrollbar'>
       {
         isFetchLikedDishes === 'idle' && likedDishesSorted.length !== 0 && likedDishesSorted.map((likedDish, index) => {
           return <LikedDishGroup key={index} date={likedDish.date} dishes={likedDish.dishes} />
