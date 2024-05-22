@@ -27,7 +27,7 @@ const Card: FC<CardProps> = ({
   const priceInFormatted = new Intl.NumberFormat('vn-VN', { style: 'currency', currency: 'VND' }).format(price)
   const distanceInFormatted = distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(2)} km`
   return (
-    <div className="relative h-full flex flex-col bg-[#18191A] w-full select-none cursor-pointer">
+    <div className="relative h-fit min-h-full flex flex-col bg-[#18191A] w-full select-none cursor-pointer">
       <div className="h-80 w-full">
         <Image
           src={imgSrc}
@@ -35,6 +35,7 @@ const Card: FC<CardProps> = ({
           height={300}
           width={300}
           className="object-cover w-full h-full"
+          draggable={false}
         />
       </div>
       <div className="flex flex-col p-4 h-full">
@@ -43,7 +44,7 @@ const Card: FC<CardProps> = ({
         </h1>
         <p className="text-white text-lg w-full line-clamp-2">{description}</p>
         <CategoryTags categories={categories} />
-        <div className="grid grid-cols-10 gap-2 grid-rows-3">
+        <div className="grid grid-cols-10 gap-2 grid-rows-3 mb-20">
           <Image
             alt="location"
             src="/app-address-icon.svg"

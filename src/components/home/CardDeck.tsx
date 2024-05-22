@@ -239,7 +239,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
             key={index}
-            className="absolute w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
+            className="absolute top-0 w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
             style={{
               x,
               y,
