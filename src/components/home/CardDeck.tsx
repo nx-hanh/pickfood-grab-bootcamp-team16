@@ -235,11 +235,11 @@ const CardDeck: React.FC<CardDeckProps> = ({ action, setAction, setIsSwiping, ha
   }, [storeStatus])
   return (<>
     {isPrepareData ? (
-      <div className="relative h-full w-screen flex justify-center items-center max-w-screen-sm mx-auto touch-none overflow-y-scroll no-scrollbar">
+      <div className="relative h-full w-full flex justify-center items-center max-w-xs mx-auto touch-none overflow-y-scroll no-scrollbar">
         {props.map(({ x, y, rot, scale }, index) => (
           <animated.div
             key={index}
-            className="absolute w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
+            className="absolute top-0 w-full h-full touch-none will-change-transform placeholder:flex justify-center items-center"
             style={{
               x,
               y,

@@ -19,7 +19,7 @@ const LikedDishCard: FC<LikedDishCardProps> = ({ dish }) => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <div className="rounded-sm shadow-md border px-4 py-3 font-mono text-sm bg-white flex flex-row items-center">
+        <div className="rounded-sm shadow-md border px-4 py-3 font-mono text-sm bg-white flex flex-row items-center cursor-pointer">
           <Image src={dish.image} alt={dish.name} width={64} height={64} className='m-1' />
           <div className="flex-1 flex flex-col items-start justify-center">
             <span className="font-semibold">{dish.name}</span>
@@ -32,7 +32,7 @@ const LikedDishCard: FC<LikedDishCardProps> = ({ dish }) => {
       <DrawerContent
         className='bg-white w-full flex items-center justify-center '
       >
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-xs ">
           <DrawerHeader>
             <DrawerTitle>{dish.name}</DrawerTitle>
             <DrawerDescription>{dish.description}</DrawerDescription>

@@ -112,7 +112,7 @@ const SettingsPage = () => {
       </section>
 
       <div className="footer">
-        <Button size='lg' className='absolute bottom-20 mb-2 left-3 right-3 text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
+        <Button size='lg' className='absolute max-w-[320px] mx-auto bottom-20 mb-2 left-3 right-3 text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
           Đăng xuất
         </Button>
         </div>

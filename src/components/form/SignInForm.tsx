@@ -42,28 +42,29 @@ const SignInForm = () => {
   const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    // console.log(values);
     const response = await fetch('/api/auth', {
       method: 'POST',
-      headers : {
-        'Content-Type' : 'application/json',
+      headers: {
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email: values.email,
         password: values.password,
         newUser: false
-        })
-      })      
-      setButtonClicked(true);
-      if(response.ok) {
-        localStorage.setItem("token", (await response.json()).token);
-        router.push('/home')
-      } else {
-        console.error('Registration failed')
+      })
+    })
+    setButtonClicked(true);
+    if (response.ok) {
+      const token = (await response.json()).token;
+      if (!token || token === 'undefined' || token === 'null') {
+        alert('Email hoặc mật khẩu không chính xác');
+        return;
       }
-  };
-
-  const handleClick = () => {
+      localStorage.setItem("token", token);
+      router.push('/home')
+    } else {
+      console.error('Registration failed')
+    }
   };
 
   return (
@@ -71,56 +72,56 @@ const SignInForm = () => {
       <div className="header p-3 top-3">
         <p className="flex flex-wrap text-4xl font-semibold"> Đăng nhập</p>
       </div>
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-        <div className='mx-4 space-y-2'>
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder='email@hallo.com' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mật khẩu</FormLabel>
-                <FormControl>
-                  <Input
-                    type='password'
-                    placeholder='Nhập mật khẩu'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
+          <div className='mx-4 space-y-2'>
+            <FormField
+              control={form.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder='email@hallo.com' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mật khẩu</FormLabel>
+                  <FormControl>
+                    <Input
+                      type='password'
+                      placeholder='Nhập mật khẩu'
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* <Button className='w-full mt-6 bg-green-600 border-2 border-green-600' type='submit'> */}
+          <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 text-white bg-green-600 border-2 border-green-600' type='submit' disabled={buttonClicked}>
+            Đăng nhập
+          </Button>
+        </form>
+        <div className='w-11/12 mx-4 my-4 text-xm flex items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-900 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-900'>
+          hoặc
         </div>
-        {/* <Button className='w-full mt-6 bg-green-600 border-2 border-green-600' type='submit'> */}
-        <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center mt-6 text-white bg-green-600 border-2 border-green-600' type='submit' disabled={buttonClicked}>
-           Đăng nhập
-        </Button>
-      </form>
-      <div className='w-11/12 mx-4 my-4 text-xm flex items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-900 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-900'>
-        hoặc
-      </div>
-      <GoogleSignInButton>Đăng nhập với Google</GoogleSignInButton>
-      <p className='text-center text-xm text-black mt-2'>
-        Nếu bạn chưa có tài khoản, hãy&nbsp;
-        <Link className='text-blue-500 hover:underline' href='/signup'>
-          đăng kí tại đây
-        </Link>
-      </p>
-    </Form>
+        <GoogleSignInButton>Đăng nhập với Google</GoogleSignInButton>
+        <p className='text-center text-xm text-black mt-2'>
+          Nếu bạn chưa có tài khoản, hãy&nbsp;
+          <Link className='text-blue-500 hover:underline' href='/signup'>
+            đăng kí tại đây
+          </Link>
+        </p>
+      </Form>
     </div>
   );
 };

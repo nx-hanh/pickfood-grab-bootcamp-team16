@@ -3,11 +3,11 @@ module.exports = {
   important: true,
   darkMode: ["class"],
   content: [
-    './pages/**/*.tsx',
-    './components/**/*.tsx',
-    './app/**/*.tsx',
-    './src/**/*.tsx',
-	],
+    "./pages/**/*.tsx",
+    "./components/**/*.tsx",
+    "./app/**/*.tsx",
+    "./src/**/*.tsx",
+  ],
   theme: {
     container: {
       center: true,
@@ -15,6 +15,9 @@ module.exports = {
       screens: {
         "2xl": "1400px",
       },
+    },
+    maxWidth: {
+      xs: "500px",
     },
     extend: {
       colors: {
@@ -69,4 +72,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

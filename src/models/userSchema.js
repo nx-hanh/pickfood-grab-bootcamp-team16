@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
         type: [[Number]], // Array of numbers
         default: null // Default value is null
     },
+    init_favorites : [Number],
     is_active: {
         type: Boolean,
         default: true // Default value is true
