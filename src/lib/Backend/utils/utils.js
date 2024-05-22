@@ -34,4 +34,13 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-module.exports = { getGridID, calculateDistance };
+function shuffleArray(array) {
+    const shuffled = array.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+module.exports = { getGridID, calculateDistance, shuffleArray };

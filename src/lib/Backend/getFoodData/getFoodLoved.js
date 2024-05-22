@@ -49,7 +49,7 @@ async function getFoodLoved(email) {
     for (let i = 0; i < lovedFood.length; i++) {
         result.push({
             id: lovedFood[i].dishID,
-            name: lovedFood[i].userEmail,
+            name: lovedFood[i].dishes[0].name,
             imgLink: lovedFood[i].dishes[0].imgLink,
             price: lovedFood[i].dishes[0].price,
             description: lovedFood[i].dishes[0].description,
