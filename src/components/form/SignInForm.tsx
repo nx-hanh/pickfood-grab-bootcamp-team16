@@ -58,15 +58,17 @@ const SignInForm = () => {
       const token = (await response.json()).token;
       if (!token || token === 'undefined' || token === 'null') {
         alert('Email hoặc mật khẩu không chính xác');
+        setButtonClicked(false);
         return;
       }
+      alert('Đăng nhập thành công!');
       localStorage.setItem("token", token);
       router.push('/home')
     } else {
       console.error('Registration failed')
     }
   };
-
+  
   return (
     <div>
       <div className="header p-3 top-3">
