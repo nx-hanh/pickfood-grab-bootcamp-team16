@@ -51,6 +51,7 @@ const UpdateFavorites: React.FC = () => {
     addFavorite()
     dispatch(resetDishes());
     setButtonClicked(true);
+    alert("Đổi món thành công!");
   };
   // GET api/getcategories (lấy các category từ server, format [category_id, category_name], protected api)
 
@@ -104,34 +105,63 @@ const UpdateFavorites: React.FC = () => {
   }, []);
 
   return (
-    <div> 
+    // <div className = "className='h-full flex flex-col"> 
+    //   <div className="header p-2 top-2">
+    //       <h1 className="flex justify-stretch flex-wrap text-3xl font-bold">
+    //        
+    //   </div>
+    //   <div className='flex overflow-hidden pb-20'>
+    //   <div className='h-full flex flex-wrap justify-start space-x-1 px-1 overflow-auto '>
+    //   {foodList.map((food: FoodItem, index) => (
+    //     <Button 
+    //       variant ={`${selectedFoodItems.includes(index)? 'default' : 'outline'}`}
+    //       key={index}
+    //       className={`m-1 text-white ${selectedFoodItems.includes(index)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
+    //       type="submit"
+    //       onClick={() => handleFoodSelect(index)}
+    //     >
+    //       <div>
+    //         {selectedFoodItems.includes(index) ? <Heart className = 'mr-1'/> : <Croissant className = 'mr-1'/>}
+    //       </div>
+    //       {food.name}
+    //     </Button>
+    //   ))}
+    //    </div>
+    //   </div>
+    //   <div className="footer">
+    //     <Button size='lg' className='absolute bottom-3 left-3 right-3 max-w-[320px] mx-auto text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
+    //       Xác nhận
+    //     </Button>
+    //   </div>
+    // </div>
+    <div className='h-full flex flex-col '>
       <div className="header p-2 top-2">
-          <h1 className="flex justify-stretch flex-wrap text-3xl font-bold">
-            Cập nhật những món ăn bạn yêu thích 🥳</h1>
+        <h1 className="flex justify-stretch flex-wrap text-3xl font-bold">
+        Cập nhật những món ăn bạn yêu thích 🥳</h1>
       </div>
       <div className='flex overflow-hidden pb-20'>
-      <div className='h-full flex flex-wrap justify-start space-x-1 px-1 overflow-y-scroll'>
-      {foodList.map((food: FoodItem, index) => (
-        <Button 
-          variant ={`${selectedFoodItems.includes(index)? 'default' : 'outline'}`}
-          key={index}
-          className={`m-1 text-white ${selectedFoodItems.includes(index)? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
-          type="submit"
-          onClick={() => handleFoodSelect(index)}
-        >
-          <div>
-            {selectedFoodItems.includes(index) ? <Heart className = 'mr-1'/> : <Croissant className = 'mr-1'/>}
-          </div>
-          {food.name}
-        </Button>
-      ))}
-       </div>
+        <div className='h-full flex flex-wrap justify-start space-x-1 px-1 overflow-y-scroll '>
+          {foodList.map((food: FoodItem, index) => (
+            <Button
+              variant={`${selectedFoodItems.includes(index) ? 'default' : 'outline'}`}
+              key={index}
+              className={`m-1 text-white ${selectedFoodItems.includes(index) ? 'bg-red-400 border-2 border-red-400' : 'bg-green-600 border-2 border-green-600'}`}
+              type="submit"
+              onClick={() => handleFoodSelect(index)}
+            >
+              <div>
+                {selectedFoodItems.includes(index) ? <Heart className='mr-1' /> : <Croissant className='mr-1' />}
+              </div>
+              {food.name}
+            </Button>
+          ))}
+        </div>
       </div>
       <div className="footer">
-        <Button size='lg' className='absolute bottom-3 left-3 right-3 text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
+        <Button size='lg' className='absolute bottom-3 left-3 right-3 max-w-[320px] mx-auto text-white bg-green-600 justify-center disabled' onClick={handleClick} type='submit' disabled={buttonClicked}>
           Xác nhận
         </Button>
-        </div>
+      </div>
     </div>
   );
 };
