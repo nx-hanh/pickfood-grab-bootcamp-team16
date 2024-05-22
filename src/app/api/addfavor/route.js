@@ -2,6 +2,8 @@ const updateFavorites = require('@/lib/Backend/database/updateUser.js');
 const updateInitFavorites = require('@/lib/Backend/database/updateInitFavorite.js');
 const jsonHeader = require('@/lib/Backend/header/jsonHeader.js');
 const filterCategory = require('@/lib/Backend/database/filterCategory.js');
+const { cookies } = require("next/headers");
+
 
 export async function POST(request) {
     let userData = await request.json();
@@ -17,6 +19,12 @@ export async function POST(request) {
     let status = {
         "status": updateStatus
     }
+    cookies().set("sessionID", "", {
+        maxAge: 0,
+    });
+    cookies().set("category_sent_list", "", {
+        maxAge: 0,
+    }); 
     return new Response(JSON.stringify(status), jsonHeader);
 }
 

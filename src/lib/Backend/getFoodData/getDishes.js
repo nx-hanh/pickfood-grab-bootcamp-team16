@@ -2,7 +2,7 @@ const database = require('@/lib/Backend/database/Database.js');
 const Dish = require('@/models/dishSchema.js');
 const Restaurant = require('@/models/restaurantsSchema.js');
 const limit_dishes = 30;
-const limit_dishes_category = limit_dishes / 5;
+const limit_dishes_category = limit_dishes / 6;
 const utils = require('@/lib/Backend/utils/utils.js');
 const categoryMerchant = global.categoryMerchant;
 

@@ -17,4 +17,4 @@ const DishSchema = new mongoose.Schema({
 //   indexing the category_id field
 // DishSchema.index({ category_id: 1 });
 
-module.exports = mongoose.models.new_dishes || mongoose.model('new_dishes', DishSchema);
+module.exports = mongoose.models.new_dishes_1 || mongoose.model('new_dishes_1', DishSchema);
