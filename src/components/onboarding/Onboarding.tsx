@@ -86,8 +86,8 @@ const Onboarding: React.FC = () => {
         <h1 className="flex justify-stretch flex-wrap text-3xl font-bold">
           Lựa chọn những món ăn bạn yêu thích 🥳</h1>
       </div>
-      <div className='flex-1 overflow-hidden pb-20'>
-        <div className='h-full flex flex-wrap justify-stretch px-1 overflow-y-scroll '>
+      <div className='flex overflow-hidden pb-20'>
+        <div className='h-full flex flex-wrap justify-start space-x-1 px-1 overflow-y-scroll '>
           {foodList.map((food: FoodItem, index) => (
             <Button
               variant={`${selectedFoodItems.includes(index) ? 'default' : 'outline'}`}
