@@ -56,7 +56,6 @@ async function getDishes(recommendationList, category_sent_list, lat, long) {
             if (restaurant_id_query.length == 0) continue;
         }
         let limit = Math.min(limit_dishes_category, limit_dishes - numberOfDishes);
-        console.log(`limit: ${limit}, category: ${recommendationList[i].id}`)
         let pipeline = [
         {
             $lookup: {
