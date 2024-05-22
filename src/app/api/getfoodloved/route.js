@@ -1,5 +1,4 @@
 const getFoodLoved = require('@/lib/Backend/getFoodData/getFoodLoved.js');
-const getFoodLoved = require('@/lib/Backend/getFoodData/getFoodLoved.js');
 
 const jsonHeader = require('@/lib/Backend/header/jsonHeader.js');
 

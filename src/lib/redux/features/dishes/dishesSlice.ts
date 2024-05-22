@@ -160,7 +160,6 @@ export const dishesSlice = createAppSlice({
             const likedDish = state.likedDishes.find(
               (dish) => dish.date === likeDate
             );
-            console.log(likedDish);
             if (likedDish) {
               likedDish.dishes.push({
                 id: element.id,

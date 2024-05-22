@@ -28,7 +28,7 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
   , [pathname]);
 
   return (
-    <div className="h-20 w-full max-w-screen-sm bg-[#111418] flex flex-row justify-between items-center px-8">
+    <div className="h-20 w-full max-w-xs bg-[#111418] flex flex-row justify-between items-center px-8">
       {items.map((item, index) => {
         return (
           <div

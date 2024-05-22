@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, {useState} from 'react'
 import { Button } from '@/components/ui/button';
 
-const userHeader = () => {
+const UserHeader = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
 
     const handleClick = () => {
@@ -25,4 +25,4 @@ const userHeader = () => {
   )
 }
 
-export default userHeader
+export default UserHeader
