@@ -2,7 +2,7 @@ const database = require('@/lib/Backend/database/Database.js');
 const Dish = require('@/models/dishSchema.js');
 const Restaurant = require('@/models/restaurantsSchema.js');
 const limit_dishes = 30;
-const limit_dishes_category = limit_dishes / 5;
+const limit_dishes_category = limit_dishes / 6;
 const utils = require('@/lib/Backend/utils/utils.js');
 const categoryMerchant = global.categoryMerchant;
 
@@ -56,6 +56,7 @@ async function getDishes(recommendationList, category_sent_list, lat, long) {
             if (restaurant_id_query.length == 0) continue;
         }
         let limit = Math.min(limit_dishes_category, limit_dishes - numberOfDishes);
+        console.log(`limit: ${limit}, category: ${recommendationList[i].id}`)
         let pipeline = [
         {
             $lookup: {
