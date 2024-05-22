@@ -74,9 +74,11 @@ const SignUpForm = () => {
     if (response.ok) {
       const token = (await response.json()).token;
       if (!token || token === 'undefined' || token === 'null') {
-        alert('Registration failed. Try again later!');
+        alert('Đăng kí thất bại, thử lại sau!');
+        setButtonClicked(false);
         return;
       }
+      alert('Đăng kí thành công, PickFood xin chào!');
       router.push('/onboarding')
       localStorage.setItem("token", token);
       // localStorage.setItem('itemName', value)
@@ -155,7 +157,7 @@ const SignUpForm = () => {
               )}
             />
           </div>
-          <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center text-white mt-6 bg-green-600 border-2 border-green-600' type='submit' disabled={buttonClicked}>
+          <Button variant='outline' className='w-11/12 mx-4 grid justify-items-center text-white mt-6 bg-green-600 border-2 border-green-600' type='submit'>
             Đăng kí
           </Button>
         </form>
