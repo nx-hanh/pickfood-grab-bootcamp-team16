@@ -24,14 +24,16 @@ export default function RootLayout({
     <StoreProvider>
       <html lang="en">
         <body className={cn(
-          "relative h-svh max-h-svh flex flex-col justify-start items-center py-auto",
+          "relative h-svh max-h-svh flex flex-col justify-start items-center w-screen",
           fontSans.className
         )}>
-          <Header />
-          {children}
+          <div className="h-full w-screen flex flex-col justify-start items-center max-w-xs shadow-lg">
+            <Header />
+            {children}
+          </div>
         </body>
       </html >
-    </StoreProvider>
+    </StoreProvider >
   );
 }
 

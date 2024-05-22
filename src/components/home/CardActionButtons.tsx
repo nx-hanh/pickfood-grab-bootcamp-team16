@@ -28,7 +28,7 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
       <div className="absolute bottom-24 w-[300px] h-[75px] flex justify-between items-center">
         <div className="w-[125px] h-full flex flex-row justify-between items-end">
           <button
-            className={`w-[45px] h-[45px] rounded-full `}
+            className={`w-[30px] h-[30px] rounded-full `}
             onClick={(event) => {
               event.preventDefault();
               setAction(ACTIONS_TYPE.DISLIKE);
@@ -37,8 +37,9 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
             <Image
               src={"/card-dislike-button-icon.svg"}
               alt="dislike"
-              width={45}
-              height={45}
+              width={30}
+              height={30}
+              className="opacity-40"
             />
           </button>
           <button
