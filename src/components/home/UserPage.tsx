@@ -38,7 +38,7 @@ const UserPage = () => {
     };
 
     return (
-    <div className="container w-full flex">
+    <div className="container w-full h-full flex">
       <div className="image-container">
         <img 
           src={userbg.src}

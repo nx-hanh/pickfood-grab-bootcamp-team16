@@ -12,7 +12,7 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
   const items = [
     { src: "/app-menu-all-icon.svg", alt: "all", link: "/all" , isDevelop: false },
     { src: "/app-menu-temphobby-icon.svg", alt: "temp", link: "/temp-hobby", isDevelop: false},
-    { src: "/app-menu-home-icon.svg", alt: "home", link: "/home", size: 65 , isDevelop: true},
+    { src: "/app-menu-home-icon.svg", alt: "home", link: "/home", size: 56 , isDevelop: true},
     { src: "/app-menu-history-icon.svg", alt: "history", link: "/history", isDevelop: true },
     { src: "/app-menu-user-icon.svg", alt: "user", link: "/user"  , isDevelop: true },
   ];
@@ -28,12 +28,12 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
   , [pathname]);
 
   return (
-    <div className="h-20 w-full max-w-xs bg-[#111418] flex flex-row justify-between items-center px-8">
+    <div className="h-14 sm:h-20 w-full max-w-xs bg-[#111418] flex flex-row justify-between items-center px-8">
       {items.map((item, index) => {
         return (
           <div
             key={index}
-            className="cursor-pointer w-[65px] h-[65px] flex justify-center items-center rounded-full"
+            className="cursor-pointer w-12 h-12 sm:w-16 sm:h-16 flex justify-center items-center rounded-full"
             onClick={() => item.isDevelop ? handleClick(item.link) : null}
           >
             <Image

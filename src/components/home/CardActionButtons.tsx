@@ -25,7 +25,7 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
       : "bg-transparent";
   return (
     <>
-      <div className="absolute bottom-24 w-[300px] h-[75px] flex justify-between items-center">
+      <div className="absolute bottom-2 w-[280px] h-[75px] flex justify-between items-center">
         <div className="w-[125px] h-full flex flex-row justify-between items-end">
           <button
             className={`w-[30px] h-[30px] rounded-full `}
@@ -43,7 +43,7 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
             />
           </button>
           <button
-            className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#f08c00] ${bgSkip}`}
+            className={`w-[60px] sm:w-[75px] h-[60px] sm:h-[75px] rounded-full flex items-center justify-center border-2 border-[#f08c00] ${bgSkip}`}
             onClick={(event) => {
               event.preventDefault();
               setAction(ACTIONS_TYPE.SKIP);
@@ -59,7 +59,7 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
         </div>
         <div className="w-[125px] h-full flex flex-row justify-start items-end">
           <button
-            className={`w-[75px] h-[100%] rounded-full flex items-center justify-center border-2 border-[#2F9E44] ${bgLike}`}
+            className={`w-[60px] sm:w-[75px] h-[60px] sm:h-[75px] rounded-full flex items-center justify-center border-2 border-[#2F9E44] ${bgLike}`}
             onClick={(event) => {
               event.preventDefault();
               setAction(ACTIONS_TYPE.LIKE);
