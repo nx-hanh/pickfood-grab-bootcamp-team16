@@ -32,9 +32,9 @@ function createSession(data, expirationTime = sessionExpirationTime) { // Defaul
     return sessionID;
 }
 
-function getSession(sessionID) {
+function getSession(sessionID, email = null) {
     const session = sessions.get(sessionID);
-    if (session) {
+    if (session && (email == null || session.data.email == email)) {
         resetSessionTimeout(sessionID); // Reset expiration timeout
         return session.data;
     }

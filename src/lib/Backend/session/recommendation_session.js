@@ -5,7 +5,7 @@ const getRecommendation = require('@/lib/Backend/recommendation/recommendation.j
 
 async function extract_recommendation(userdata, sessionID) {
     if (sessionID != null) {
-        let sessionData = getSession(sessionID);
+        let sessionData = getSession(sessionID, userdata.email);
         if (sessionData != null) {
             if (sessionData.cnt_changes >= 3) saveSessionData(sessionData);
             return [sessionID, sessionData.recommendationList];

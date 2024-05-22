@@ -3,8 +3,6 @@ const Dish = require('@/models/dishSchema.js');
 const Restaurant = require('@/models/restaurantsSchema.js');
 const limit_dishes = 30;
 const limit_dishes_category = limit_dishes / 5;
-// const getGridID = require('@/lib/Backend/utils/getGridID.js');
-// const calculateDistance = require('@/lib/Backend/utils/calculateDistance.js')
 const utils = require('@/lib/Backend/utils/utils.js');
 const categoryMerchant = global.categoryMerchant;
 

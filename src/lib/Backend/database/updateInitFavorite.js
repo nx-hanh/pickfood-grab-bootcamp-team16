@@ -10,7 +10,7 @@ async function updateInitFavorites(email, favorite_category) {
     };
     const updateUser = await database.findAndUpdate(User, { email: email }, update);
     if (updateUser) {
-        console.log("Favorites updated successfully");
+        console.log("Init Favorites updated successfully");
         return true;
     }
     
