@@ -66,7 +66,6 @@ const UpdateFavorites: React.FC = () => {
       if(response.ok) {
         const result = (await response.json());
         const myList: FoodItem[] = result.map((item) => ({ id: item[0], name: item[1] }));
-        console.log(myList);
         return myList;
       } else {
         console.error('Registration failed')

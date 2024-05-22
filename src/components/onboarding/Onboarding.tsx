@@ -17,7 +17,6 @@ const Onboarding: React.FC = () => {
 
 
   const addFavorite = async () => {
-    const favorites = selectedFoodItems.map(food => food.id);
     const response = await fetch('/api/addfavor', {
       method: 'POST',
       headers: {
@@ -26,12 +25,11 @@ const Onboarding: React.FC = () => {
       },
 
       body: JSON.stringify({
-        favorites
         // favorites: selectedFoodItems.map(food => food.id)
+        favorites: selectedFoodItems
       })
     })
     if (response.ok) {
-      localStorage.setItem('favorites', JSON.stringify(selectedFoodItems.map(food => food.id)));
       router.push('/home')
     } else {
       console.error('Registration failed')
