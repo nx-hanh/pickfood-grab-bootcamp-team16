@@ -6,7 +6,7 @@ import Header from "@/components/common/header";
 import StoreProvider from "@/components/StoreProvider";
 
 const fontSans = FontSans({
-  subsets: ["vietnamese"],
+  subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
 });
 
@@ -27,10 +27,8 @@ export default function RootLayout({
           "relative h-svh max-h-svh flex flex-col justify-start items-center w-screen",
           fontSans.className
         )}>
-          <div className="h-full w-screen flex flex-col justify-start items-center max-w-xs shadow-lg">
             <Header />
             {children}
-          </div>
         </body>
       </html >
     </StoreProvider >
