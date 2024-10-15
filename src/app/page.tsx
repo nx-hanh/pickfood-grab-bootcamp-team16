@@ -1,6 +1,9 @@
 import SlideShow from "@/components/welcome/SlideShow";
+import { auth } from "@/auth";
+import ActionButton from "@/components/welcome/ActionButton";
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth();
   return (
     <main className="min-h-svh w-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-6 bg-white bg-opacity-90 p-6 rounded-xl shadow-2xl">
@@ -13,17 +16,7 @@ export default function Page() {
           </p>
         </div>
         <SlideShow />
-        <div className="space-y-4">
-          <button
-            className="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
-            aria-label="Get Started"
-          >
-            Get Started
-          </button>
-          <p className="text-center text-sm text-gray-500">
-            Join thousands of food lovers finding their daily meals with ease!
-          </p>
-        </div>
+        <ActionButton isLogin={Boolean(session)} user={session?.user} />
       </div>
     </main>
   );
