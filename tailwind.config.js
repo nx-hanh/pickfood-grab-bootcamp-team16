@@ -10,11 +10,11 @@ module.exports = {
   theme: {
     container: {
       center: "true",
-      screens: {
-        "2xl": "1400px",
-      },
     },
     extend: {
+      screens: {
+        lg: "1025px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -25,7 +25,7 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
       : "bg-transparent";
   return (
     <>
-      <div className="absolute bottom-2 w-[280px] h-[75px] flex justify-between items-center">
+      <div className="absolute lg:-bottom-10 bottom-2 w-[280px] h-[75px] flex justify-between items-center inset-x-0 mx-auto">
         <div className="w-[125px] h-full flex flex-row justify-between items-end">
           <button
             className={`w-[30px] h-[30px] rounded-full `}
@@ -74,7 +74,6 @@ const CardActionButtons: FC<CardActionButtonsProps> = ({
           </button>
         </div>
       </div>
-
     </>
   );
 };

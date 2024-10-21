@@ -88,7 +88,6 @@ model dishes {
   merchant_id      String?      @db.ObjectId
   name             String
   price            Int
-  rank             Int
   restaurant       restaurants? @relation(fields: [merchant_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "category_id_1")
@@ -102,38 +101,6 @@ model favoritedishes {
   createAt  DateTime @db.Date
   dishID    String
   userEmail String
-}
-
-model new_dishes {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  category         String[]
-  category_id      Int?
-  category_list_id Int[]
-  description      String
-  id_              String   @map("id")
-  imgLink          String?
-  merchant_id      String?  @db.ObjectId
-  name             String
-  price            Int
-
-  @@index([id_], map: "id_1_autocreated")
-}
-
-model new_dishes_1 {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  category         String[]
-  category_id      Int?
-  category_list_id Int[]
-  description      String
-  id_              String   @map("id")
-  imgLink          String?
-  merchant_id      String?  @db.ObjectId
-  name             String
-  price            Int
-
-  @@index([category_id], map: "category_id_1")
-  @@index([id_], map: "id_1_autocreated")
-  @@index([merchant_id], map: "merchant_id_1")
 }
 
 model restaurants {

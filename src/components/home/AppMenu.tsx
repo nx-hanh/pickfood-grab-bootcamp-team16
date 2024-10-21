@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -53,7 +54,12 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
   );
 
   return (
-    <section className="fixed bottom-0 inset-x-0 mx-auto h-14 sm:h-20 bg-primary max-w-screen-md flex flex-row justify-between items-center px-8 rounded-md">
+    <section
+      className={cn(
+        "fixed bottom-0 inset-x-0 mx-auto h-14 sm:h-20 bg-primary max-w-screen-md flex flex-row justify-between items-center px-8 rounded-md",
+        "lg:inset-y-0 lg:right-0 lg:flex-col lg:my-auto lg:w-20 lg:h-[80%] lg:max-h-[30rem] lg:mx-0"
+      )}
+    >
       {items.map((item, index) => {
         return (
           <Link
@@ -64,8 +70,8 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
             <Image
               src={item.src}
               alt={item.alt}
-              width={item.size || 35}
-              height={item.size || 35}
+              width={item.size || 30}
+              height={item.size || 30}
               className={
                 index === activeIndex ? "opacity-100" : "opacity-70 fill-black"
               }

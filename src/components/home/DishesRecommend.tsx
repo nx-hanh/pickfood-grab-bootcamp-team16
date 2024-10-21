@@ -65,7 +65,7 @@ const DishesRecommended = () => {
   };
 
   return (
-    <div className="relative h-full w-full max-w-xs flex flex-col items-center justify-start">
+    <>
       <CardDeck
         action={action}
         setAction={setAction}
@@ -73,7 +73,7 @@ const DishesRecommended = () => {
         handleAction={handleAction}
       />
       <CardActionButtons isSwiping={isSwiping} setAction={setAction} />
-    </div>
+    </>
   );
 };
 

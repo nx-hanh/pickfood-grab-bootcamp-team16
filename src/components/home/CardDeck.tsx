@@ -265,7 +265,7 @@ const CardDeck: React.FC<CardDeckProps> = ({
   return (
     <>
       {isPrepareData ? (
-        <div className="relative h-full w-full flex justify-center items-center max-w-xs mx-auto touch-none">
+        <div className="relative h-full w-full lg:w-[70%] flex justify-center items-center mx-auto touch-none">
           {props.map(({ x, y, rot, scale }, index) => (
             <animated.div
               key={index}
