@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,21 +6,17 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-model User {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?         @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  favorites     String[]
-  onboardingCompleted          Boolean @default(false)
- 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+type RestaurantsOpeningHours {
+  fri String
+  mon String
+  sat String
+  sun String
+  thu String
+  tue String
+  wed String
 }
- 
+
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @db.ObjectId
@@ -40,46 +30,126 @@ model Account {
   scope             String?
   id_token          String? @db.String
   session_state     String?
+  ratingVector      Json?
+  recommendDishes   Json[]
+  recommendedMark   Json?
 
- 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
 }
- 
+
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
   userId       String   @db.ObjectId
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+model User {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                String?
+  email               String?   @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  favorites           String[]
+  onboardingCompleted Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model VerificationToken {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
 }
 
-model Dish {
-  id           String   @id @map("_id") // Map id field to MongoDB's ObjectId
-  name         String?
-  imgLink      String?
-  price        Float?
-  description  String?
-  merchantId   String   @db.ObjectId
-  category     String[]
-  categoryId   Int?     
-  rank         Int?
+model dishes {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  category         String[]
+  category_id      Int
+  category_list_id Int[]
+  description      String
+  id_              String       @map("id")
+  imgLink          String?
+  merchant_id      String?      @db.ObjectId
+  name             String
+  price            Int
+  rank             Int
+  restaurant       restaurants? @relation(fields: [merchant_id], references: [id], onDelete: Cascade)
 
-  @@index([categoryId])
+  @@index([category_id], map: "category_id_1")
+  @@index([id_], map: "id_1_autocreated")
+  @@index([merchant_id], map: "merchant_id_1")
+}
+
+model favoritedishes {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  v         Int      @map("__v")
+  createAt  DateTime @db.Date
+  dishID    String
+  userEmail String
+}
+
+model new_dishes {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  category         String[]
+  category_id      Int?
+  category_list_id Int[]
+  description      String
+  id_              String   @map("id")
+  imgLink          String?
+  merchant_id      String?  @db.ObjectId
+  name             String
+  price            Int
+
+  @@index([id_], map: "id_1_autocreated")
+}
+
+model new_dishes_1 {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  category         String[]
+  category_id      Int?
+  category_list_id Int[]
+  description      String
+  id_              String   @map("id")
+  imgLink          String?
+  merchant_id      String?  @db.ObjectId
+  name             String
+  price            Int
+
+  @@index([category_id], map: "category_id_1")
+  @@index([id_], map: "id_1_autocreated")
+  @@index([merchant_id], map: "merchant_id_1")
+}
+
+model restaurants {
+  id           String                  @id @default(auto()) @map("_id") @db.ObjectId
+  address      String
+  cuisine      String
+  gridX        Int
+  gridY        Int
+  id_          String                  @map("id")
+  imgLink      String
+  location     Float[]
+  name         String
+  openingHours RestaurantsOpeningHours
+  status       String
+  dishes       dishes[]
+
+  @@index([gridX, gridY], map: "gridX_1_gridY_1")
+  @@index([id_], map: "id_1")
 }

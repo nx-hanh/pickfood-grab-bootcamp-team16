@@ -1,32 +1,28 @@
-'use client'
+import { getRecommendDishes } from "@/actions/dish.action";
+import { auth } from "@/auth";
 import AppMenu from "@/components/home/AppMenu";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import TempComponentForFetch from "@/components/home/TempComponentForFetch";
+import { dishes } from "@prisma/client";
 
-
-export default function Layout({
+export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (!token || token === "undefined" || token === "" || token === "null") {
-        alert("Please sign in to continue");
-        router.push("/signin");
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // const session = await auth();
+  // const handleFetchDishes = async (location: LocationInLatLong) => {
+  //   "use server";
+  //   await getRecommendDishes({
+  //     location,
+  //     userEmail: session?.user.email!,
+  //   });
+  //   return [] as dishes[];
+  // };
   return (
-    <div className="h-full flex flex-col w-full justify-start flex-1 overflow-hidden pb-14 sm:pb-20">
+    <main className="relative h-full flex flex-col w-full justify-start flex-1 overflow-hidden pb-14 sm:pb-20">
       {children}
-      <div className="absolute bottom-0 left-0 w-full flex justify-center items-center">
-        <AppMenu />
-      </div>
-    </div>
+      <AppMenu />
+      {/* <TempComponentForFetch fetchDishFunction={handleFetchDishes} /> */}
+    </main>
   );
 }

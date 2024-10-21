@@ -1,4 +1,5 @@
 "use client";
+import { updateFavorites } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,9 +9,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CATEGORIES } from "@/lib/constant";
+import { useToast } from "@/hooks/use-toast";
+import useServerAction from "@/hooks/useServerAction";
+import { ACTION_STATUS, CATEGORIES } from "@/lib/constant";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, InfoIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -18,9 +23,17 @@ const formSchema = z.object({
   selects: z.string().array().length(3),
 });
 
-const OnboardForm = () => {
+interface OnboardFormProps {
+  userEmail: string;
+  updateFunction: () => Promise<void>;
+}
+
+const OnboardForm = ({ userEmail, updateFunction }: OnboardFormProps) => {
   const FoodTags = CATEGORIES;
-  // 1. Define your form.
+  const [runUpdateFavorites, loading] = useServerAction(updateFavorites);
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,11 +41,19 @@ const OnboardForm = () => {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log("values submitted:  ", values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("sessionUpdate");
+    await updateFunction();
+    const result = await runUpdateFavorites(userEmail, values.selects);
+    if (result && result.status === ACTION_STATUS.success) {
+      router.push("/home");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: result?.message,
+      });
+    }
   }
   const handleSelect = (tag: string) => {
     const currentValue = form.getValues("selects");
@@ -93,9 +114,12 @@ const OnboardForm = () => {
         <FormMessage />
         <Button
           type="submit"
-          className={`w-full py-2 px-4 border border-transparent text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+          className={cn(
+            `w-full py-2 px-4 border border-transparent text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`,
+            loading && "cursor-not-allowed opacity-50"
+          )}
         >
-          Continue
+          {loading ? "Loading..." : "Continue"}
         </Button>
         <div className="mt-4">
           <div className="relative">

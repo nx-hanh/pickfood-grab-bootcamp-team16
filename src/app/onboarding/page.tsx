@@ -1,6 +1,15 @@
+import { auth, updateSession } from "@/auth";
 import OnboardForm from "@/components/onboarding/OnboardForm";
 
-const page = () => {
+const page = async () => {
+  const session = await auth();
+  const updateSessionHandle = async () => {
+    "use server";
+    await updateSession({
+      ...session,
+      user: { ...session?.user, onboardingCompleted: true },
+    });
+  };
   return (
     <main className="min-h-svh w-full bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-xl shadow-lg">
@@ -12,7 +21,10 @@ const page = () => {
             {" Let's personalize your experience"}
           </p>
         </div>
-        <OnboardForm />
+        <OnboardForm
+          userEmail={session?.user?.email!}
+          updateFunction={updateSessionHandle}
+        />
       </div>
     </main>
   );

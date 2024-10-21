@@ -1,7 +1,8 @@
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { dishesSlice } from "@/lib/redux/features/dishes/dishesSlice";
+import { userInfoSlice } from "@/lib/redux/features/user/userSlice";
 
-const rootReducer = combineSlices(dishesSlice)
+const rootReducer = combineSlices(dishesSlice, userInfoSlice);
 
 export const makeStore = () => {
   return configureStore({

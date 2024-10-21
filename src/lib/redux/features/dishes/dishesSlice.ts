@@ -82,24 +82,12 @@ export const dishesSlice = createAppSlice({
       );
     }),
     asyncUpdateDishes: create.asyncThunk(
-      async ({
-        lat,
-        long,
-        token,
-      }: {
-        lat: number;
-        long: number;
-        token: string;
-      }) => {
-        const locationAcceptable = lat !== -1 && long !== -1;
-        const url = locationAcceptable
-          ? `/api/getdishes?lat=${lat}&long=${long}`
-          : `/api/getdishes`;
+      async ({ lat, long }: { lat: number; long: number }) => {
+        const url = `/api/v2/recommend?lat=${lat}&long=${long}`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `${token}`,
           },
         });
         return response.json().then((data) => data.dishes);
@@ -115,6 +103,7 @@ export const dishesSlice = createAppSlice({
             return;
           }
           const newDishes = action.payload.map((dish: any) => {
+            console.log(dish);
             return {
               id: dish.id,
               name: dish.name,

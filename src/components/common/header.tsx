@@ -12,6 +12,7 @@ const Header = () => {
           alt="logo"
           width={150}
           height={100}
+          priority
         />
       </Link>
       <div className="flex">
