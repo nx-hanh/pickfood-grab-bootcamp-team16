@@ -26,9 +26,16 @@ const formSchema = z.object({
 interface OnboardFormProps {
   userEmail: string;
   updateFunction: () => Promise<void>;
+  isUpdate?: boolean;
+  favorites?: string[];
 }
 
-const OnboardForm = ({ userEmail, updateFunction }: OnboardFormProps) => {
+const OnboardForm = ({
+  userEmail,
+  updateFunction,
+  isUpdate,
+  favorites,
+}: OnboardFormProps) => {
   const FoodTags = CATEGORIES;
   const [runUpdateFavorites, loading] = useServerAction(updateFavorites);
   const { toast } = useToast();
@@ -37,12 +44,11 @@ const OnboardForm = ({ userEmail, updateFunction }: OnboardFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      selects: [],
+      selects: favorites ? favorites : [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("sessionUpdate");
     await updateFunction();
     const result = await runUpdateFavorites(userEmail, values.selects);
     if (result && result.status === ACTION_STATUS.success) {
@@ -119,7 +125,7 @@ const OnboardForm = ({ userEmail, updateFunction }: OnboardFormProps) => {
             loading && "cursor-not-allowed opacity-50"
           )}
         >
-          {loading ? "Loading..." : "Continue"}
+          {loading ? "Loading..." : isUpdate ? "Save Changes" : "Continue"}
         </Button>
         <div className="mt-4">
           <div className="relative">
@@ -130,7 +136,9 @@ const OnboardForm = ({ userEmail, updateFunction }: OnboardFormProps) => {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Step 1 of 1</span>
+              <span className="px-2 bg-white text-gray-500">
+                {isUpdate ? "Thank for help us customize" : "Step 1 of 1"}
+              </span>
             </div>
           </div>
         </div>
