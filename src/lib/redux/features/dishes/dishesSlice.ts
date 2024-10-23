@@ -1,3 +1,4 @@
+import { LikedDishReturn } from "@/actions/dish.action";
 import { createAppSlice } from "@/lib/redux/createAppSlice";
 import { PayloadAction, createSelector } from "@reduxjs/toolkit";
 
@@ -10,7 +11,7 @@ export interface Dish {
   categories: string[];
   category_id: number[];
   address: string;
-  distance: number;
+  distance?: number;
 }
 export const isDish = (obj: any): obj is Dish => {
   return (
@@ -124,16 +125,8 @@ export const dishesSlice = createAppSlice({
       }
     ),
     asyncFetchLikedDishes: create.asyncThunk(
-      async (token: string) => {
-        const url = `/api/getfoodloved`;
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${token}`,
-          },
-        });
-        return response.json().then((data) => data);
+      async (likedDish: LikedDishReturn[]) => {
+        return likedDish;
       },
       {
         pending: (state) => {
@@ -141,7 +134,7 @@ export const dishesSlice = createAppSlice({
         },
         fulfilled: (state, action) => {
           action.payload.forEach((element) => {
-            const date = new Date(element.timeStamp);
+            const date = new Date(element.createAt);
             const likeDate = `${date.getFullYear()}-${
               date.getMonth() + 1
             }-${date.getDate()}`;
@@ -150,30 +143,28 @@ export const dishesSlice = createAppSlice({
             );
             if (likedDish) {
               likedDish.dishes.push({
-                id: element.id,
-                name: element.name,
-                description: element.description,
-                price: element.price,
-                image: element.imgLink,
-                categories: element.category,
-                category_id: element.category_id,
-                address: element.address,
-                distance: element.distance,
+                id: element.dish.id,
+                name: element.dish.name,
+                description: element.dish.description,
+                price: element.dish.price,
+                image: element.dish.imgLink || "",
+                categories: element.dish.category,
+                category_id: element.dish.category_list_id,
+                address: element.dish.restaurant?.address || "",
               });
             } else {
               state.likedDishes.push({
                 date: likeDate,
                 dishes: [
                   {
-                    id: element.id,
-                    name: element.name,
-                    description: element.description,
-                    price: element.price,
-                    image: element.imgLink,
-                    categories: element.category,
-                    category_id: element.category_id,
-                    address: element.address,
-                    distance: element.distance,
+                    id: element.dish.id,
+                    name: element.dish.name,
+                    description: element.dish.description,
+                    price: element.dish.price,
+                    image: element.dish.imgLink || "",
+                    categories: element.dish.category,
+                    category_id: element.dish.category_list_id,
+                    address: element.dish.restaurant?.address || "",
                   },
                 ],
               });

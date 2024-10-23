@@ -88,6 +88,7 @@ model dishes {
   merchant_id      String?      @db.ObjectId
   name             String
   price            Int
+  favoritedishes   favoritedishes[]
   restaurant       restaurants? @relation(fields: [merchant_id], references: [id], onDelete: Cascade)
 
   @@index([category_id], map: "category_id_1")
@@ -99,8 +100,9 @@ model favoritedishes {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   v         Int      @map("__v")
   createAt  DateTime @db.Date
-  dishID    String
+  dishID    String   @db.ObjectId
   userEmail String
+  dish      dishes   @relation(fields: [dishID], references: [id], onDelete: Cascade)
 }
 
 model restaurants {

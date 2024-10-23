@@ -1,12 +1,8 @@
 import { getUserAndAccount, putRatingVector } from "@/actions/user.action";
 import getDishes from "@/lib/Backend/getFoodData/getDishes";
-import {
-  ACTION_STATUS,
-  CATEGORIES_MAP,
-  DISH_ACTIONS,
-  DISH_ACTIONS_TYPE,
-} from "@/lib/constant";
+import { ACTION_STATUS, DISH_ACTIONS, DISH_ACTIONS_TYPE } from "@/lib/constant";
 import prisma from "@/lib/prisma";
+import { dishes, favoritedishes } from "@prisma/client";
 interface GetRecommendDishesParams {
   location?: LocationInLatLong;
   userEmail: string;
@@ -52,7 +48,6 @@ export const reactDish = async ({
   dishId: string;
   reaction: DISH_ACTIONS_TYPE;
 }) => {
-  console.log();
   const data: ActionReturn<boolean> = {
     status: ACTION_STATUS.success,
     message: "Favorites updated successfully",
@@ -112,5 +107,32 @@ export const reactDish = async ({
     data.data = false;
     return JSON.parse(JSON.stringify(data));
   }
+  return JSON.parse(JSON.stringify(data));
+};
+export type LikedDishReturn = favoritedishes & {
+  dish: dishes & {
+    restaurant: {
+      address: string;
+    } | null;
+  };
+};
+export const getLikedDishes = async (email: string) => {
+  const data: ActionReturn<LikedDishReturn[]> = {
+    status: ACTION_STATUS.success,
+    message: "Favorites updated successfully",
+  };
+  const likedDishes = await prisma.favoritedishes.findMany({
+    where: { userEmail: email },
+    include: {
+      dish: {
+        include: {
+          restaurant: {
+            select: { address: true },
+          },
+        },
+      },
+    },
+  });
+  data.data = likedDishes;
   return JSON.parse(JSON.stringify(data));
 };
