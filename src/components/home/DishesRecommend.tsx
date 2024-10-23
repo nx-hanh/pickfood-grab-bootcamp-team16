@@ -9,51 +9,37 @@ import {
   isDish,
   removeDish,
 } from "@/lib/redux/features/dishes/dishesSlice";
-const ACTIONS_TYPE = {
-  LIKE: "like",
-  DISLIKE: "dislike",
-  SKIP: "skip",
-  NONE: "none",
-};
+import { DISH_ACTIONS, DISH_ACTIONS_TYPE } from "@/lib/constant";
+import { reactDish } from "@/actions/dish.action";
 
-const DishesRecommended = () => {
+const DishesRecommended = ({ email }: { email: string }) => {
   const dispatch = useAppDispatch();
-  const [action, setAction] = useState<string>(ACTIONS_TYPE.NONE); //manage action for click button
-  const [isSwiping, setIsSwiping] = useState<string>(ACTIONS_TYPE.NONE); //manage action for swipe card
+  const [action, setAction] = useState<string>(DISH_ACTIONS.NONE); //manage action for click button
+  const [isSwiping, setIsSwiping] = useState<string>(DISH_ACTIONS.NONE); //manage action for swipe card
   const fetchReactDish = async (dish: Dish, action: string) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token") || "";
-      const response = await fetch("/api/reactdishes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify({
-          dish_id: dish.id,
-          categories: dish.category_id,
-          like: action === ACTIONS_TYPE.LIKE,
-        }),
-      });
-      if (!response.ok) {
-        console.error("Error:", response.statusText);
-      }
-    }
+    await fetch("/api/v2/recommend/react", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ dishId: dish.id, react: action }),
+    });
   };
   const handleAction = (action: string, dish: Dish) => {
     switch (action) {
-      case ACTIONS_TYPE.LIKE:
+      case DISH_ACTIONS.LIKE:
         if (isDish(dish)) {
           dispatch(dishLiked(dish));
           fetchReactDish(dish, action);
         }
         break;
-      case ACTIONS_TYPE.SKIP:
+      case DISH_ACTIONS.SKIP:
         if (isDish(dish)) {
           dispatch(removeDish(dish));
         }
         break;
-      case ACTIONS_TYPE.DISLIKE:
+      case DISH_ACTIONS.DISLIKE:
         if (isDish(dish)) {
           dispatch(removeDish(dish));
           fetchReactDish(dish, action);

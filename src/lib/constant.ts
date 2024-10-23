@@ -33,3 +33,11 @@ export const ACTION_STATUS: {
   success: "success",
   fail: "fail",
 };
+export const DISH_ACTIONS = {
+  LIKE: "like",
+  DISLIKE: "dislike",
+  SKIP: "skip",
+  NONE: "none",
+};
+
+export type DISH_ACTIONS_TYPE = "like" | "dislike" | "skip" | "none";

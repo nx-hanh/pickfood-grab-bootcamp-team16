@@ -103,7 +103,6 @@ export const dishesSlice = createAppSlice({
             return;
           }
           const newDishes = action.payload.map((dish: any) => {
-            console.log(dish);
             return {
               id: dish.id,
               name: dish.name,

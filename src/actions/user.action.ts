@@ -1,9 +1,27 @@
 "use server";
-import { updateSession } from "@/auth";
+import { auth } from "@/auth";
 import getRecommendation from "@/lib/Backend/recommendation/recommendation";
 import { RatingVector } from "@/lib/Backend/recommendation/recommendationSystem";
 import { ACTION_STATUS, CATEGORIES_MAP } from "@/lib/constant";
 import prisma from "@/lib/prisma";
+export const getUserAndAccount = async (email: string) => {
+  const user = await prisma.user.findFirst({
+    where: { email },
+  });
+  if (!user) {
+    return null;
+  }
+  const account = await prisma.account.findFirst({
+    where: { userId: user.id },
+  });
+  if (!account) {
+    return null;
+  }
+  return {
+    user,
+    account,
+  };
+};
 
 export const updateFavorites = async (email: string, favorites: string[]) => {
   const data: ActionReturn<void> = {
@@ -34,27 +52,30 @@ export const updateFavorites = async (email: string, favorites: string[]) => {
   }
   return JSON.parse(JSON.stringify(data));
 };
-const putRatingVector = async (favorites: string[], email: string) => {
+export const putRatingVector = async (
+  favorites: string[],
+  email: string,
+  updatePoint?: number
+) => {
   const user = await prisma.user.findFirst({
     where: { email },
   });
   if (!user) {
-    throw new Error("User account not found");
+    return false;
   }
   const account = await prisma.account.findFirst({
     where: { userId: user.id },
   });
   if (!account) {
-    throw new Error("User account not found");
+    return false;
   }
   const ratingVector = account.ratingVector || {};
+  const point = updatePoint ? updatePoint : 1;
   favorites.forEach((favorites) => {
-    ratingVector[CATEGORIES_MAP.get(favorites)!] = 1;
-  });
-  user.favorites.forEach((favorite) => {
-    if (!favorites.includes(favorite)) {
-      ratingVector[CATEGORIES_MAP.get(favorite)!] = 0.25;
-    }
+    const isExist = ratingVector[CATEGORIES_MAP.get(favorites)!];
+    ratingVector[CATEGORIES_MAP.get(favorites)!] = isExist
+      ? (parseFloat(isExist) + point).toString()
+      : point.toString();
   });
   await prisma.account.update({
     where: { id: account.id },
@@ -62,6 +83,7 @@ const putRatingVector = async (favorites: string[], email: string) => {
       ratingVector,
     },
   });
+  return true;
 };
 
 export const generateRecommendDishes = async (email: string) => {
@@ -110,6 +132,37 @@ export const generateRecommendDishes = async (email: string) => {
         ])
       ),
       recommendDishes: recommendations,
+    },
+  });
+};
+
+export const resetRecommendData = async () => {
+  const data: ActionReturn<void> = {
+    status: ACTION_STATUS.success,
+    message: "Favorites updated successfully",
+  };
+  const session = await auth();
+  if (!session) {
+    data.status = ACTION_STATUS.fail;
+    data.message = "Not authenticated";
+    return JSON.parse(JSON.stringify(data));
+  }
+  const email = session.user.email!;
+  const UserData = await getUserAndAccount(email);
+  if (!UserData) {
+    data.status = ACTION_STATUS.fail;
+    data.message = "User not found completed";
+    return JSON.parse(JSON.stringify(data));
+  }
+  await generateRecommendDishes(email);
+  await resetRecommendedMark(UserData.account.id);
+  return JSON.parse(JSON.stringify(data));
+};
+const resetRecommendedMark = async (accountId: string) => {
+  await prisma.account.update({
+    where: { id: accountId },
+    data: {
+      recommendedMark: {},
     },
   });
 };
