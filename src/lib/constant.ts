@@ -39,5 +39,3 @@ export const DISH_ACTIONS = {
   SKIP: "skip",
   NONE: "none",
 };
-
-export type DISH_ACTIONS_TYPE = "like" | "dislike" | "skip" | "none";

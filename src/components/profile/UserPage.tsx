@@ -70,7 +70,7 @@ const UserPage = async () => {
               Log out
             </Button>
           </form>
-          <Link href="/user/updateFavorites">
+          <Link href="/user/update-favorites">
             <Button
               aria-label="Update Favorites"
               className="w-full min-h-fit px-6 text-base font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"

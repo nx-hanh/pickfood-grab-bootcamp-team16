@@ -11,7 +11,7 @@ interface CardProps {
   price: number;
   categories: string[];
   description: string;
-  distance: number;
+  distance?: number;
 }
 
 const Card: FC<CardProps> = ({
@@ -28,10 +28,11 @@ const Card: FC<CardProps> = ({
     style: "currency",
     currency: "VND",
   }).format(price);
-  const distanceInFormatted =
-    distance < 1
+  const distanceInFormatted = distance
+    ? distance < 1
       ? `${Math.round(distance * 1000)} m`
-      : `${distance.toFixed(2)} km`;
+      : `${distance.toFixed(2)} km`
+    : "'chưa xác định'";
   return (
     <div className="relative h-full min-h-full flex flex-col bg-white lg:mt-2 lg:rounded-sm w-full select-none cursor-pointer">
       <div className="h-[40%] lg:h-[50%] w-full">

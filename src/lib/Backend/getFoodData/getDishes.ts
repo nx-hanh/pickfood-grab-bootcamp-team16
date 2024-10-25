@@ -1,6 +1,7 @@
 // 'use server';
-import utils from "@/lib/Backend/utils/utils";
+import utils from "@/lib/backend/utils/utils";
 import prisma from "@/lib/prisma";
+import { DishExtend } from "@/types/type";
 import { dishes } from "@prisma/client";
 
 const limit_dishes = 30;
@@ -39,7 +40,7 @@ async function getDishes(
   recommendedMark: RecommendedMark = {},
   lat?: number,
   long?: number
-): Promise<[dishes[], Record<string, number>]> {
+): Promise<[DishExtend[], Record<string, number>]> {
   const category_sent_list = recommendedMark ? recommendedMark : {};
   const haveUserLocation = lat != null && long != null;
   const gridID: GridID = utils.getGridID(lat, long);

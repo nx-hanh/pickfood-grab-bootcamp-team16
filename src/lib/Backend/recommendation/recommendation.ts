@@ -1,7 +1,7 @@
 import {
   recommendationSystem,
   RatingVector,
-} from "@/lib/Backend/recommendation/recommendationSystem";
+} from "@/lib/backend/recommendation/recommendationSystem";
 
 interface RecommendationParams {
   userRatingVector: RatingVector;

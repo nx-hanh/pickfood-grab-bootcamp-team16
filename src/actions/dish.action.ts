@@ -1,8 +1,8 @@
 import { getUserAndAccount, putRatingVector } from "@/actions/user.action";
-import getDishes from "@/lib/Backend/getFoodData/getDishes";
-import { ACTION_STATUS, DISH_ACTIONS, DISH_ACTIONS_TYPE } from "@/lib/constant";
+import getDishes from "@/lib/backend/getFoodData/getDishes";
+import { ACTION_STATUS, DISH_ACTIONS } from "@/lib/constant";
 import prisma from "@/lib/prisma";
-import { dishes, favoritedishes } from "@prisma/client";
+import { DISH_ACTIONS_TYPE, DishExtend, LikedDishReturn } from "@/types/type";
 interface GetRecommendDishesParams {
   location?: LocationInLatLong;
   userEmail: string;
@@ -109,13 +109,6 @@ export const reactDish = async ({
   }
   return JSON.parse(JSON.stringify(data));
 };
-export type LikedDishReturn = favoritedishes & {
-  dish: dishes & {
-    restaurant: {
-      address: string;
-    } | null;
-  };
-};
 export const getLikedDishes = async (email: string) => {
   const data: ActionReturn<LikedDishReturn[]> = {
     status: ACTION_STATUS.success,
@@ -134,5 +127,36 @@ export const getLikedDishes = async (email: string) => {
     },
   });
   data.data = likedDishes;
+  return JSON.parse(JSON.stringify(data));
+};
+export const getRecommendDish = async (email: string) => {
+  const data: ActionReturn<DishExtend> = {
+    status: ACTION_STATUS.success,
+    message: "Favorites updated successfully",
+  };
+  const UserData = await getUserAndAccount(email);
+  if (!UserData) {
+    data.status = ACTION_STATUS.fail;
+    data.message = "Failed to update favorites";
+    return JSON.parse(JSON.stringify(data));
+  }
+  if (UserData.account.currentRecommend) {
+    data.data = UserData.account.currentRecommend as DishExtend;
+    return JSON.parse(JSON.stringify(data));
+  }
+  const location = UserData.account.location as LocationInLatLong;
+  const recommendation = await getDishes(
+    UserData.account.recommendDishes as RecommendationElement[],
+    {},
+    location.lat,
+    location.long
+  );
+  data.data = recommendation[0][0];
+  await prisma.account.update({
+    where: { id: UserData.account.id },
+    data: {
+      currentRecommend: recommendation[0][0] as DishExtend,
+    },
+  });
   return JSON.parse(JSON.stringify(data));
 };

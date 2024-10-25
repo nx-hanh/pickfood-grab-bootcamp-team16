@@ -1,5 +1,5 @@
-import { LikedDishReturn } from "@/actions/dish.action";
 import { createAppSlice } from "@/lib/redux/createAppSlice";
+import { LikedDishReturn } from "@/types/type";
 import { PayloadAction, createSelector } from "@reduxjs/toolkit";
 
 export interface Dish {
@@ -141,17 +141,20 @@ export const dishesSlice = createAppSlice({
             const likedDish = state.likedDishes.find(
               (dish) => dish.date === likeDate
             );
+            const likedDishIds = likedDish?.dishes.map((item) => item.id) || [];
             if (likedDish) {
-              likedDish.dishes.push({
-                id: element.dish.id,
-                name: element.dish.name,
-                description: element.dish.description,
-                price: element.dish.price,
-                image: element.dish.imgLink || "",
-                categories: element.dish.category,
-                category_id: element.dish.category_list_id,
-                address: element.dish.restaurant?.address || "",
-              });
+              if (!likedDishIds.includes(element.dish.id)) {
+                likedDish.dishes.push({
+                  id: element.dish.id,
+                  name: element.dish.name,
+                  description: element.dish.description,
+                  price: element.dish.price,
+                  image: element.dish.imgLink || "",
+                  categories: element.dish.category,
+                  category_id: element.dish.category_list_id,
+                  address: element.dish.restaurant?.address || "",
+                });
+              }
             } else {
               state.likedDishes.push({
                 date: likeDate,

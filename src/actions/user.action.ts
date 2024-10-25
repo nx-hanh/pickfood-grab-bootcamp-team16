@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/auth";
-import getRecommendation from "@/lib/Backend/recommendation/recommendation";
-import { RatingVector } from "@/lib/Backend/recommendation/recommendationSystem";
+import getRecommendation from "@/lib/backend/recommendation/recommendation";
+import { RatingVector } from "@/lib/backend/recommendation/recommendationSystem";
 import { ACTION_STATUS, CATEGORIES_MAP } from "@/lib/constant";
 import prisma from "@/lib/prisma";
 export const getUserAndAccount = async (email: string) => {
@@ -155,14 +155,34 @@ export const resetRecommendData = async () => {
     return JSON.parse(JSON.stringify(data));
   }
   await generateRecommendDishes(email);
-  await resetRecommendedMark(UserData.account.id);
+  await resetRecommendedMarkAndCurrentRecommend(UserData.account.id);
   return JSON.parse(JSON.stringify(data));
 };
-const resetRecommendedMark = async (accountId: string) => {
+const resetRecommendedMarkAndCurrentRecommend = async (accountId: string) => {
   await prisma.account.update({
     where: { id: accountId },
     data: {
       recommendedMark: {},
+      currentRecommend: null,
     },
   });
+};
+
+export const updateCurrentLocation = async ({
+  email,
+  location,
+}: {
+  email: string;
+  location: LocationInLatLong;
+}) => {
+  const UserData = await getUserAndAccount(email);
+  if (!UserData) return false;
+  const updateAccount = await prisma.account.update({
+    where: { id: UserData.account.id },
+    data: {
+      location: location,
+    },
+  });
+  if (!updateAccount) return false;
+  return true;
 };

@@ -20,8 +20,8 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
     {
       src: "/app-menu-temphobby-icon.svg",
       alt: "temp",
-      link: "/temp-hobby",
-      isDevelop: false,
+      link: "/recommend",
+      isDevelop: true,
     },
     {
       src: "/app-menu-home-icon.svg",
@@ -52,7 +52,49 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
     // eslint-disable-next-line
     [pathname]
   );
-
+  useEffect(() => {
+    const fetchLocation = async (location: LocationInLatLong) => {
+      await fetch("api/v2/account/location",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ location }),
+        });
+        
+    };
+    if (typeof window !== "undefined") {
+      if (navigator.geolocation) {
+        navigator.permissions
+          .query({ name: "geolocation" })
+          .then((permissionStatus) => {
+            if (permissionStatus.state === "prompt") {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  fetchLocation({
+                    lat: position.coords.latitude,
+                    long: position.coords.longitude,
+                  });
+                },
+                () => {
+                  fetchLocation({ lat: -1, long: -1 });
+                }
+              );
+            } else if (permissionStatus.state === "denied") {
+              fetchLocation({ lat: -1, long: -1 });
+            } else {
+              navigator.geolocation.getCurrentPosition((position) => {
+                fetchLocation({
+                  lat: position.coords.latitude,
+                  long: position.coords.longitude,
+                });
+              });
+            }
+          });
+      }
+    }
+  }, []);
   return (
     <section
       className={cn(
