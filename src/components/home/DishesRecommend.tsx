@@ -9,7 +9,7 @@ import {
   isDish,
   removeDish,
 } from "@/lib/redux/features/dishes/dishesSlice";
-import { DISH_ACTIONS, DISH_ACTIONS_TYPE } from "@/lib/constant";
+import { DISH_ACTIONS } from "@/lib/constant";
 import { reactDish } from "@/actions/dish.action";
 
 const DishesRecommended = ({ email }: { email: string }) => {

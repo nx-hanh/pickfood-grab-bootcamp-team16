@@ -19,3 +19,8 @@ declare type RecommendationElement = {
   id: number;
 };
 declare type RecommendedMark = Record<string, number>;
+
+declare type GridID = {
+  gridX: number;
+  gridY: number;
+};

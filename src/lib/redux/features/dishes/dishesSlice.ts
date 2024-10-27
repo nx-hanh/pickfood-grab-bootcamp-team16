@@ -1,5 +1,5 @@
 import { createAppSlice } from "@/lib/redux/createAppSlice";
-import { LikedDishReturn } from "@/types/type";
+import { FavoriteDishWithRestaurant } from "@/types/type";
 import { PayloadAction, createSelector } from "@reduxjs/toolkit";
 
 export interface Dish {
@@ -125,7 +125,7 @@ export const dishesSlice = createAppSlice({
       }
     ),
     asyncFetchLikedDishes: create.asyncThunk(
-      async (likedDish: LikedDishReturn[]) => {
+      async (likedDish: FavoriteDishWithRestaurant[]) => {
         return likedDish;
       },
       {

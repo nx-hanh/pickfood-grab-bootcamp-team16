@@ -15,7 +15,7 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
       src: "/app-menu-all-icon.svg",
       alt: "all",
       link: "/all",
-      isDevelop: false,
+      isDevelop: true,
     },
     {
       src: "/app-menu-temphobby-icon.svg",
@@ -54,15 +54,13 @@ const AppMenu: FC<AppMenuProps> = ({}) => {
   );
   useEffect(() => {
     const fetchLocation = async (location: LocationInLatLong) => {
-      await fetch("api/v2/account/location",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ location }),
-        });
-        
+      await fetch("api/v2/account/location", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ location }),
+      });
     };
     if (typeof window !== "undefined") {
       if (navigator.geolocation) {

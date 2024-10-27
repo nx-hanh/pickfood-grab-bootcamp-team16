@@ -1,6 +1,6 @@
 // 'use server';
-import utils from "@/lib/backend/utils/utils";
 import prisma from "@/lib/prisma";
+import { calculateDistance, getGridID, shuffleArray } from "@/lib/utils";
 import { DishExtend } from "@/types/type";
 import { dishes } from "@prisma/client";
 
@@ -11,19 +11,15 @@ const categoryMerchant: Map<
   Map<number, number>
 > = global.categoryMerchant;
 
-interface GridID {
-  gridX: number;
-  gridY: number;
-}
-
-async function getRestaurantIDList(
+export async function getRestaurantIDList(
   gridX: number,
-  gridY: number
+  gridY: number,
+  range = 1
 ): Promise<string[]> {
   const restaurantList = await prisma.restaurants.findMany({
     where: {
-      gridX: { gte: gridX - 1, lte: gridX + 1 },
-      gridY: { gte: gridY - 1, lte: gridY + 1 },
+      gridX: { gte: gridX - range, lte: gridX + range },
+      gridY: { gte: gridY - range, lte: gridY + range },
     },
     select: { id: true },
   });
@@ -43,7 +39,7 @@ async function getDishes(
 ): Promise<[DishExtend[], Record<string, number>]> {
   const category_sent_list = recommendedMark ? recommendedMark : {};
   const haveUserLocation = lat != null && long != null;
-  const gridID: GridID = utils.getGridID(lat, long);
+  const gridID: GridID = getGridID(lat, long);
   const restaurantIDList = haveUserLocation
     ? await getRestaurantIDList(gridID.gridX, gridID.gridY)
     : null;
@@ -98,7 +94,7 @@ async function getDishes(
       const restaurantLocation = dish.restaurant?.location;
       const distance =
         haveUserLocation && restaurantLocation
-          ? utils.calculateDistance(
+          ? calculateDistance(
               lat!,
               long!,
               restaurantLocation[0],
@@ -117,7 +113,7 @@ async function getDishes(
     category_sent_list[recommendation.id] = index + dishes.length;
   }
 
-  return [utils.shuffleArray(result), category_sent_list];
+  return [shuffleArray(result), category_sent_list];
 }
 
 export default getDishes;

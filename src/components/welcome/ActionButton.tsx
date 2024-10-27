@@ -13,7 +13,7 @@ const ActionButton = async ({ isLogin, user }: ActionButtonProps) => {
     <>
       {isLogin ? (
         <div className="">
-          <Link href="/home">
+          <Link href="/recommend">
             <Button
               aria-label="Get Started"
               className="w-full min-h-fit px-6 py-3 text-base font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"

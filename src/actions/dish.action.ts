@@ -1,8 +1,16 @@
 import { getUserAndAccount, putRatingVector } from "@/actions/user.action";
-import getDishes from "@/lib/backend/getFoodData/getDishes";
+import getDishes, {
+  getRestaurantIDList,
+} from "@/lib/backend/getFoodData/getDishes";
 import { ACTION_STATUS, DISH_ACTIONS } from "@/lib/constant";
 import prisma from "@/lib/prisma";
-import { DISH_ACTIONS_TYPE, DishExtend, LikedDishReturn } from "@/types/type";
+import { getGridID } from "@/lib/utils";
+import {
+  DISH_ACTIONS_TYPE,
+  DishExtend,
+  DishWithRestaurant,
+  FavoriteDishWithRestaurant,
+} from "@/types/type";
 interface GetRecommendDishesParams {
   location?: LocationInLatLong;
   userEmail: string;
@@ -110,7 +118,7 @@ export const reactDish = async ({
   return JSON.parse(JSON.stringify(data));
 };
 export const getLikedDishes = async (email: string) => {
-  const data: ActionReturn<LikedDishReturn[]> = {
+  const data: ActionReturn<FavoriteDishWithRestaurant[]> = {
     status: ACTION_STATUS.success,
     message: "Favorites updated successfully",
   };
@@ -158,5 +166,36 @@ export const getRecommendDish = async (email: string) => {
       currentRecommend: recommendation[0][0] as DishExtend,
     },
   });
+  return JSON.parse(JSON.stringify(data));
+};
+
+export const getNearByDishes = async (email: string) => {
+  const data: ActionReturn<DishWithRestaurant[]> = {
+    status: ACTION_STATUS.success,
+    message: "Favorites updated successfully",
+  };
+  const UserData = await getUserAndAccount(email);
+  if (!UserData) {
+    data.status = ACTION_STATUS.fail;
+    data.message = "Failed to update favorites";
+    return JSON.parse(JSON.stringify(data));
+  }
+  const location = UserData.account.location as LocationInLatLong;
+  const gridID: GridID = getGridID(location.lat, location.long);
+  const restaurantIDList = await getRestaurantIDList(
+    gridID.gridX,
+    gridID.gridY,
+    3
+  );
+  const dishes = await prisma.dishes.findMany({
+    where: { merchant_id: { in: restaurantIDList } },
+    take: 50,
+    include: {
+      restaurant: {
+        select: { location: true, address: true },
+      },
+    },
+  });
+  data.data = dishes;
   return JSON.parse(JSON.stringify(data));
 };
