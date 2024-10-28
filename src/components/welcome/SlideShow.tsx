@@ -24,6 +24,7 @@ const SlideShow: FC<SlideShowProps> = ({}) => {
       setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
     }, 3000);
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <motion.div

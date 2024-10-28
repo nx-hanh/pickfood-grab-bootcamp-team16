@@ -28,7 +28,7 @@ const RecommendCard = async () => {
       <article className="w-full h-full bg-white rounded-xl shadow-lg overflow-hidden ">
         <div className="relative w-full h-[60%]">
           <Image
-            src={dish.imgLink}
+            src={dish.imgLink || "/slide-bg.jpg"}
             alt="Delicious Food"
             className="w-full h-full object-cover -z-10"
             width={480}

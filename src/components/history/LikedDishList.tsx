@@ -1,5 +1,5 @@
 "use client";
-import { LikedDishReturn } from "@/actions/dish.action";
+
 import HistorySkeleton from "@/components/history/HistorySkeleton";
 import LikedDishGroup from "@/components/history/LikedDishGroup";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,13 @@ import {
   selectIsFetchLikedDishes,
   selectLikedDishes,
 } from "@/lib/redux/features/dishes/dishesSlice";
+import { FavoriteDishWithRestaurant } from "@/types/type";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { FC, useEffect } from "react";
 
 interface LikedDishListProps {
-  serverLikedDish: LikedDishReturn[];
+  serverLikedDish: FavoriteDishWithRestaurant[];
 }
 
 const LikedDishList: FC<LikedDishListProps> = ({ serverLikedDish }) => {
