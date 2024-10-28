@@ -9,15 +9,17 @@ const RecommendCard = async () => {
   const session = await auth();
   const data = await getRecommendDish(session?.user.email!);
   const dish = data?.data as DishExtend;
-  const priceInFormatted = new Intl.NumberFormat("vn-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(dish.price);
-  const distanceInFormatted = dish.distance
+  const priceInFormatted = dish
+    ? new Intl.NumberFormat("vn-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(dish?.price)
+    : "chưa xác định";
+  const distanceInFormatted = dish?.distance
     ? dish.distance < 1
       ? `${Math.round(dish.distance * 1000)} m`
       : `${dish.distance.toFixed(2)} km`
-    : "'chưa xác định'";
+    : "chưa xác định";
   return dish ? (
     <section
       className={

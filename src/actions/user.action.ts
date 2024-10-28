@@ -77,12 +77,13 @@ export const putRatingVector = async (
       ? (parseFloat(isExist) + point).toString()
       : point.toString();
   });
-  await prisma.account.update({
+  const updateAccount = await prisma.account.update({
     where: { id: account.id },
     data: {
       ratingVector,
     },
   });
+  if (!updateAccount) return false;
   return true;
 };
 
@@ -92,13 +93,13 @@ export const generateRecommendDishes = async (email: string) => {
     where: { email, onboardingCompleted: true },
   });
   if (!user) {
-    throw new Error("User not found or onboarding not completed");
+    return false;
   }
   const account = await prisma.account.findFirst({
     where: { userId: user.id },
   });
   if (!account) {
-    throw new Error("User account not found");
+    return false;
   }
   const userRatingVectors: RatingVectorConstructor = [];
   if (account.ratingVector) {
@@ -117,6 +118,7 @@ export const generateRecommendDishes = async (email: string) => {
       });
     });
   }
+
   const userRatingVector = new RatingVector(userRatingVectors);
   // Implement logic to get user rating vector from user account
   const recommendations = await getRecommendation({
@@ -134,6 +136,7 @@ export const generateRecommendDishes = async (email: string) => {
       recommendDishes: recommendations,
     },
   });
+  return true;
 };
 
 export const resetRecommendData = async () => {

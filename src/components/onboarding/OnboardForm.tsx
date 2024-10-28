@@ -49,9 +49,9 @@ const OnboardForm = ({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await updateFunction();
     const result = await runUpdateFavorites(userEmail, values.selects);
     if (result && result.status === ACTION_STATUS.success) {
+      await updateFunction();
       router.push("/home");
     } else {
       toast({

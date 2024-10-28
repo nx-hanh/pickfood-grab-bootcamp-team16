@@ -4,7 +4,7 @@ import getDishes, {
 } from "@/lib/backend/getFoodData/getDishes";
 import { ACTION_STATUS, DISH_ACTIONS } from "@/lib/constant";
 import prisma from "@/lib/prisma";
-import { getGridID } from "@/lib/utils";
+import { getGridID, shuffleArray } from "@/lib/utils";
 import {
   DISH_ACTIONS_TYPE,
   DishExtend,
@@ -156,8 +156,8 @@ export const getRecommendDish = async (email: string) => {
   const recommendation = await getDishes(
     UserData.account.recommendDishes as RecommendationElement[],
     {},
-    location.lat,
-    location.long
+    location?.lat,
+    location?.long
   );
   data.data = recommendation[0][0];
   await prisma.account.update({
@@ -189,13 +189,13 @@ export const getNearByDishes = async (email: string) => {
   );
   const dishes = await prisma.dishes.findMany({
     where: { merchant_id: { in: restaurantIDList } },
-    take: 50,
     include: {
       restaurant: {
         select: { location: true, address: true },
       },
     },
   });
-  data.data = dishes;
+  const shuffleDishes = shuffleArray(dishes) as DishWithRestaurant[];
+  data.data = shuffleDishes.slice(54);
   return JSON.parse(JSON.stringify(data));
 };
