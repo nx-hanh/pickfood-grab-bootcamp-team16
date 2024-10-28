@@ -8,7 +8,7 @@ import Link from "next/link";
 const RecommendCard = async () => {
   const session = await auth();
   const data = await getRecommendDish(session?.user.email!);
-  const dish = data.data as DishExtend;
+  const dish = data?.data as DishExtend;
   const priceInFormatted = new Intl.NumberFormat("vn-VN", {
     style: "currency",
     currency: "VND",
@@ -18,7 +18,7 @@ const RecommendCard = async () => {
       ? `${Math.round(dish.distance * 1000)} m`
       : `${dish.distance.toFixed(2)} km`
     : "'chưa xác định'";
-  return (
+  return dish ? (
     <section
       className={
         "relative w-full max-w-md h-[80%] max-h-[650px] cursor-pointer transform transition-all duration-500"
@@ -28,7 +28,7 @@ const RecommendCard = async () => {
       <article className="w-full h-full bg-white rounded-xl shadow-lg overflow-hidden ">
         <div className="relative w-full h-[60%]">
           <Image
-            src={dish.imgLink || "/slide-bg.jpg"}
+            src={dish?.imgLink || "/slide-bg.jpg"}
             alt="Delicious Food"
             className="w-full h-full object-cover -z-10"
             width={480}
@@ -75,6 +75,8 @@ const RecommendCard = async () => {
         <div className="absolute w-12 h-12 bg-green-400 rounded-full top-1/2 -right-6 animate-ping"></div>
       </div>
     </section>
+  ) : (
+    <div className="relative w-full max-w-md h-[80%] max-h-[650px] bg-slate-500 animate-pulse" />
   );
 };
 

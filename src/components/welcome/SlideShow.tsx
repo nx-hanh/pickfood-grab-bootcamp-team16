@@ -34,7 +34,7 @@ const SlideShow: FC<SlideShowProps> = ({}) => {
       className="relative h-40 sm:h-48 overflow-hidden rounded-lg mb-6"
     >
       <Image
-        src="/slide-bg.jpg"
+        src="https://i.ibb.co/gvdNS9Z/pickfood-slide-bg.jpg"
         alt="Delicious Food"
         className="w-full h-full object-cover"
         width={480}

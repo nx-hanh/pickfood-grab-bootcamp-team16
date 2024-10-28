@@ -2,7 +2,7 @@ import fs from "fs";
 import _ from "lodash";
 
 const maxCategories = Number(process.env.MAX_CATEGORY);
-const prefixFileName = `${process.cwd()}/src/lib/Backend/recommendation/`;
+const prefixFileName = `${process.cwd()}/src/lib/backend/recommendation/`;
 const maxRating = 5;
 const minRating = 0.1;
 
@@ -93,7 +93,7 @@ class RecommendationSystem {
     for (const item of combineDish) {
       const combineDishRating = new RatingVector();
       for (const dish of item.dishes) {
-        combineDishRating.merge(dish2categories[dish].categories);
+        combineDishRating.merge(dish2categories[dish]?.categories);
       }
       this.dishRating.push({ rating: combineDishRating, id: item.id });
     }

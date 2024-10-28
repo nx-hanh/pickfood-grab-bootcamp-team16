@@ -1,15 +1,39 @@
-// 'use server';
 import prisma from "@/lib/prisma";
 import { calculateDistance, getGridID, shuffleArray } from "@/lib/utils";
 import { DishExtend } from "@/types/type";
 import { dishes } from "@prisma/client";
+import * as fs from "fs";
 
 const limit_dishes = 30;
 const limit_dishes_category = limit_dishes / 6;
+const prefixFileName = `${process.cwd()}/src/lib/backend/getFoodData/`;
+
+function loadCategoriesOfMerchant() {
+  const categoryMerchant: Map<string, Map<number, number>> = new Map();
+  let categories = fs
+    .readFileSync(`${prefixFileName}category_idOfMerchant.txt`, "utf8")
+    .split("\n");
+  // let cnt = 0;
+  for (let i = 0; i < categories.length; i++) {
+    let category = categories[i].split(" ");
+    let merchant_id = category[0];
+    let category_id = parseInt(category[1]);
+    if (!categoryMerchant.has(merchant_id)) {
+      categoryMerchant.set(merchant_id, new Map());
+    }
+    let cnt = categoryMerchant.get(merchant_id)?.get(category_id);
+    if (cnt == undefined) {
+      cnt = 0;
+    }
+    categoryMerchant.get(merchant_id)?.set(category_id, ++cnt);
+  }
+  return categoryMerchant;
+}
+
 const categoryMerchant: Map<
   string,
   Map<number, number>
-> = global.categoryMerchant;
+> = loadCategoriesOfMerchant();
 
 export async function getRestaurantIDList(
   gridX: number,

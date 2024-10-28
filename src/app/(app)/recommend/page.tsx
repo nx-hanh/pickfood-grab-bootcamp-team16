@@ -1,4 +1,4 @@
-import RecommendCard from "@/components/reconnend/RecommendCard";
+import RecommendCard from "@/components/recommend/RecommendCard";
 
 interface RecommendPageProps {}
 
