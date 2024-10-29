@@ -47,10 +47,6 @@ const UserPage = async () => {
             <p className="font-semibold">67</p>
             <p className="stats-label">Đang theo dõi</p>
           </div>
-          <div className="flex gap-2">
-            <p className="font-semibold">69420</p>
-            <p className="stats-label">Thích</p>
-          </div>
         </div>
 
         <div className="flex py-4 gap-6">

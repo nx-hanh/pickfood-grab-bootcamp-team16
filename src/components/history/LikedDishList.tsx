@@ -22,16 +22,18 @@ interface LikedDishListProps {
 const LikedDishList: FC<LikedDishListProps> = ({ serverLikedDish }) => {
   const router = useRouter();
   const likedDishes = useAppSelector(selectLikedDishes);
+  const items = [...likedDishes];
   const dispatch = useAppDispatch();
   const isFetchLikedDishes = useAppSelector(selectIsFetchLikedDishes);
-  const likedDishesSorted = likedDishes.sort((a: LikedDish, b: LikedDish) => {
+  const likedDishesSorted = items.sort((a: LikedDish, b: LikedDish) => {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
   useEffect(() => {
     dispatch(asyncFetchLikedDishes(serverLikedDish));
     //eslint-disable-next-line
   }, []);
-  if (isFetchLikedDishes === "failed") throw Error();
+  if (isFetchLikedDishes === "failed")
+    return <p>Failed to fetch liked dishes</p>;
   return (
     <div className="h-full max-h-full w-full overflow-y-scroll overflow-x-hidden no-scrollbar">
       {isFetchLikedDishes === "idle" &&
@@ -48,12 +50,14 @@ const LikedDishList: FC<LikedDishListProps> = ({ serverLikedDish }) => {
       {isFetchLikedDishes === "loading" && <HistorySkeleton />}
       {isFetchLikedDishes === "idle" && likedDishesSorted.length === 0 && (
         <div className="h-full flex flex-col items-center justify-center">
-          <p className="text-lg font-semibold mb-4">Bạn chưa thích món nào?</p>
+          <p className="text-lg font-semibold mb-4">
+            {"You haven't liked any dishes yet!"}
+          </p>
           <Button
             className="border border-black w-[120px] flex justify-between items-center"
             onClick={() => router.push("/home")}
           >
-            <p className="text-sm">Khám phá</p>
+            <p className="text-sm">{"Explore tasty foods"}</p>
             <ArrowRight size={16} />
           </Button>
         </div>

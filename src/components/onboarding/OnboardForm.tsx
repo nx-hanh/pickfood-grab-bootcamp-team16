@@ -75,7 +75,10 @@ const OnboardForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-3 md:space-y-8"
+      >
         <FormField
           control={form.control}
           name="selects"
@@ -127,7 +130,7 @@ const OnboardForm = ({
         >
           {loading ? "Loading..." : isUpdate ? "Save Changes" : "Continue"}
         </Button>
-        <div className="mt-4">
+        <div className="mt-1 md:mt-4">
           <div className="relative">
             <div
               className="absolute inset-0 flex items-center"
@@ -135,7 +138,7 @@ const OnboardForm = ({
             >
               <div className="w-full border-t border-gray-300" />
             </div>
-            <div className="relative flex justify-center text-sm">
+            <div className="relative flex justify-center text-xs md:text-sm">
               <span className="px-2 bg-white text-gray-500">
                 {isUpdate ? "Thank for help us customize" : "Step 1 of 1"}
               </span>

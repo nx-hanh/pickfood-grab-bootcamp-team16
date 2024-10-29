@@ -23,7 +23,7 @@ const RecommendCard = async () => {
   return dish ? (
     <section
       className={
-        "relative w-full max-w-md h-[80%] max-h-[650px] cursor-pointer transform transition-all duration-500"
+        "relative w-full max-w-md h-[65%] md:h-[80%] max-h-[650px] cursor-pointer transform transition-all duration-500"
       }
       aria-label="Interactive food card"
     >
@@ -39,10 +39,12 @@ const RecommendCard = async () => {
           <div className="absolute z-20 top-0 w-full h-full bg-gradient-to-t from-white from-[5%] via-transparent via-[50%] to-transparent" />
         </div>
       </article>
-      <div className="absolute z-50 w-full top-[50%] h-[50%] left-0 px-4 py-2 text-sm text-gray-700 flex flex-col justify-between">
-        <div className="space-y-3 ">
-          <div className="flex items-start justify-between ">
-            <p className="text-3xl font-black line-clamp-2">{dish.name}</p>
+      <div className="absolute z-50 w-full top-0 h-full left-0 px-4 py-2 text-sm text-gray-700 flex flex-col justify-end">
+        <div className="space-y-3">
+          <div className="w-full flex items-start justify-between ">
+            <p className="text-xl md:text-3xl font-black line-clamp-2">
+              {dish.name}
+            </p>
             <span className="text-lg shadow-md font-extrabold bg-green-200 rounded-full px-3 py-1">
               {priceInFormatted}
             </span>

@@ -40,19 +40,21 @@ const DishCard = ({ dish }: DishCardProps) => {
         loading="lazy"
         className="w-full h-[85%] rounded-t-xl"
       />
-      <div className="flex items-end rounded-xl absolute z-20 top-0 w-full h-full bg-gradient-to-t from-white from-[25%] via-transparent via-[50%] to-transparent">
-        <div className="w-full px-4 py-2 text-sm text-black flex flex-col justify-between">
-          <div className="space-y-2">
-            <p className="text-2xl font-black line-clamp-2">{dish.name}</p>
-            <p className="line-clamp-2">{dish.description}</p>
-            <p className="line-clamp-2">
+      <div className="flex items-end rounded-xl absolute top-0 w-full h-full bg-gradient-to-t from-white from-[25%] via-transparent via-[50%] to-transparent">
+        <div className="w-full px-1 md:px-4 py-2 text-sm text-black flex flex-col justify-between">
+          <div className="md:space-y-2">
+            <p className="text-base md:text-2xl font-black line-clamp-2">
+              {dish.name}
+            </p>
+            <p className="line-clamp-1 md:line-clamp-2">{dish.description}</p>
+            <p className="hidden md:flex line-clamp-2">
               <span className="font-semibold">Address: </span>
               <span className="font-light italic">
                 {dish.restaurant?.address}
               </span>
             </p>
             <div className="flex items-center justify-between ">
-              <span className="text-lg shadow-md font-extrabold bg-green-200 rounded-full px-3 py-1">
+              <span className="text-sm md:text-lg shadow-md font-extrabold bg-green-200 rounded-full px-3 py-1">
                 {priceInFormatted}
               </span>
               <button
